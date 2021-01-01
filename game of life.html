@@ -46,52 +46,90 @@ window.onkeyup = (e) => {
 	}
 }
 
-//game logic (about to get nuked and redone)
-//-----------------------------------------------
-function check(x){
-	count = 0
-	alive.forEach( (n) => {
-		let k = n[0] - x[0], p = n[1] - x[1]
-		if((k | p) != 0 && k <= 1 && k >= -1 && p <= 1 && p >= -1) count++
-	})
-	return count
-}
 
-function checky(x){
-	count = []
-	alive.forEach( (n) => {
-		let k = n[0] - x[0], p = n[1] - x[1]
-		if((k | p) != 0 && k <= 1 && k >= -1 && p <= 1 && p >= -1) count.push([k,p])
-	})
-	return count
-}
-
-function update(){
-	let nxt = []
+function check(c){
+	alive[c].t = true;
+	let done=[[true,true,true],[true,true,true],[true,true,true]],
+	    a = [
+		[0,0,0,0,0],
+		[0,0,0,0,0],
+		[0,0,1,0,0],
+		[0,0,0,0,0],
+		[0,0,0,0,0]
+	    ];
+	
 	for(let i = 0; i != alive.length; i++){
-		n = [[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]]
-		f = checky(alive[i])
-		if(f.length >= 2 && 3 >= f.length) nxt.push(alive[i])
-		for(let j = 0; j != n.length; j++){
-
-			let o = false
-			for(let w = 0; w != f.length; w++) if(n[j][0] == f[w][0] && n[j][1] == f[w][1]) o = true
-			if(o) continue
-
-			let x = [alive[i][0] + n[j][0], alive[i][1] + n[j][1]]
-			let l = check(x)
-
-			if(l == 3){
-				o = true
-				for(let w = 0;  w != nxt.length; w++) if(nxt[w][0] == x[0] && nxt[w][1] == x[1]) o = false
-				if(o) nxt.push(x)
-
+		if(i == c) continue;
+		let x = alive[i][0] - alive[c][0] , y = alive[i][1] - alive[c][1];
+		if(x >= -2 && x <= 2 && y >= -2 && y <= 2){
+			a[x + 2][y + 2] = 1;
+			if(alive[i].t){
+				let tj = x < 0 ? -1 : -1 + x, tw = y < 0 ? -1 : -1 + y
+				for(let j = x < 0 ? 2 + x : 2; j != tj; j--)
+					for(let w = y < 0 ? 2 + y : 2; w != tw; w--)
+						done[j][w] = false;
 			}
 		}
 	}
-	alive = nxt
+	
+	let l = [
+			[
+				a[0][0] + a[0][1] + a[0][2],
+				a[0][1] + a[0][2] + a[0][3],
+				a[0][2] + a[0][3] + a[0][4]
+			],
+			[
+				a[1][0] + a[1][1] + a[1][2],
+				a[1][1] + a[1][2] + a[1][3],
+				a[1][2] + a[1][3] + a[1][4]
+			],
+			[
+				a[2][0] + a[2][1] + a[2][2],
+				a[2][1] + a[2][2] + a[2][3],
+				a[2][2] + a[2][3] + a[2][4]
+			],
+			[
+				a[3][0] + a[3][1] + a[3][2],
+				a[3][1] + a[3][2] + a[3][3],
+				a[3][2] + a[3][3] + a[3][4]
+			],
+			[
+				a[4][0] + a[4][1] + a[4][2],
+				a[4][1] + a[4][2] + a[4][3],
+				a[4][2] + a[4][3] + a[4][4]
+			]
+		],
+	    f = [
+			[
+				l[0][0] + l[1][0] + l[2][0],
+				l[0][1] + l[1][1] + l[2][1],
+				l[0][2] + l[1][2] + l[2][2]
+			],
+			[
+				l[1][0] + l[2][0] + l[3][0],
+				l[1][1] + l[2][1] + l[3][1],
+				l[1][2] + l[2][2] + l[3][2]
+			],
+			[
+				l[2][0] + l[3][0] + l[4][0],
+				l[2][1] + l[3][1] + l[4][1],
+				l[2][2] + l[3][2] + l[4][2]
+			]
+		]
+	for(let i = 0; i != 3; i++)
+		for(let j = 0; j != 3; j++){
+			if(done[i][j] && ((f[i][j] - a[1 + i][1 + j]) == 3 || (a[1 + i][1 + j] == 1 && f[i][j] == 3))){
+				nxt.push([alive[c][0] - 1 + i, alive[c][1] - 1 + j]);
+			}
+		}
 }
-//-----------------------------------------------------------------------------------------------------
+
+function update(){
+	nxt = []
+	for(let i = 0; i != alive.length; i++)
+		check(i);
+	alive = nxt;
+}
 	
 function fucky(){
 	xo = 0, yo = 0
