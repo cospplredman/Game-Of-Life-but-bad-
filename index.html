@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Conway's Game of Life</title>
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body style="background-color:black">
+		<canvas id="screen">Your browser does not support canvas.</canvas>
+	</body>
+	<script src="utils.js"></script>
+	<script src="variables.js"></script>
+	<script src="events.js"></script>
+	<script src="update.js"></script>
+	<script src="testing.js"></script>
+	<script src="draw.js"></script>
+	<script>
+		screenctx.canvas.width = window.innerWidth;
+		screenctx.canvas.height = window.innerHeight;
+		loop();
+	</script>
+</html>
