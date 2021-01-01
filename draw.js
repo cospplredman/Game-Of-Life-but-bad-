@@ -42,8 +42,12 @@ function loop(){
 	lastpausestate=pause;
 	
 	if(zoom != oldZoom) {
+		//got bored so i fixed zoom
+		let tmp = [(xOff - (screenctx.canvas.width/ 2))/px, (yOff - (screenctx.canvas.height/2))/px]
 		oldZoom = lerp(oldZoom,zoom,0.1);
 		px = 20/oldZoom;
+		xOff = tmp[0] * px + (screenctx.canvas.width/ 2)
+		yOff = tmp[1] * px + (screenctx.canvas.height/2)
 	}
 	screenctx.fillStyle = "#ffffff";
 	alive.forEach((k)=>{
