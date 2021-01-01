@@ -106,6 +106,6 @@ screen.addEventListener("mouseup", function(e) {
   }
 });
 screen.addEventListener("wheel", function(e) {
-	zoom += e.deltaY*scrollSpeed;
+	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
 	zoom = (zoom < 0.03 ? 0.03 : (zoom > 20 ? 20 : zoom));
 });
