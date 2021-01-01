@@ -1,1 +1,1 @@
-Conways game of life in HTML
+Conways game of life in HTML and Javascript
