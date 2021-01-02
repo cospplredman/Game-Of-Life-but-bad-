@@ -1,7 +1,9 @@
 // Canvas & outer html
-let screen = document.getElementById("screen"),
-    screenctx = screen.getContext("2d"),
-	options = true;
+let screen = document.getElementById("screen");
+let screenctx = screen.getContext("2d");
+let options = false;
+let sidebarContainerUnopened = document.getElementById("sidebar-container-unopened");
+let sidebarArrow = document.getElementById("sidebar-arrow");
 // Grid
 let xOff = 0, yOff = 0,
     xOffTmp = 0, yOffTmp = 0,
@@ -13,12 +15,11 @@ let xOff = 0, yOff = 0,
     grid = true;
 // Cells
 let alive = [];
-let nxt = [];
 // Mouse
 let draggingmouse=false;
 let mbutton=-1;
 let panmode = false;
-let scrollSpeed = 0.05;
+let scrollSpeed = 0.15;
 let oldZoom = 1;
 let zoom = 1;
 // Update loop

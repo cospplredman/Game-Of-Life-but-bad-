@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 		<title>Conway's Game of Life</title>
 		<link rel="stylesheet" type="text/css" href="styles.css">
 	</head>
 	<body style="background-color:black">
-		<canvas id="screen">Your browser does not support canvas.</canvas>
+		<div id="container">
+			<canvas id="screen">Your browser does not support canvas.</canvas>
+			<div id="sidebar">
+				<div id="sidebar-container-unopened">
+					<span id="sidebar-arrow" class="arrow right"></span>
+				</div>
+				<div id="sidebar-edge">
+					
+				</div>
+			</div>
+		</div>
 	</body>
 	<script src="utils.js"></script>
 	<script src="variables.js"></script>

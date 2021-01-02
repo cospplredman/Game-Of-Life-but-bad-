@@ -4,7 +4,6 @@ function drawLine(x1,y1,x2,y2) {
 }
 function drawTextWithOutline(txt,x,y,maxWidth) {
 	screenctx.fillText(txt,x+0.5, y+0.5, maxWidth);
-	screenctx.strokeText(txt,x+0.5, y+0.5, maxWidth);
 }
 function fillTriangle(x1, y1, x2, y2, x3, y3) {
 	screenctx.beginPath();
@@ -42,12 +41,8 @@ function loop(){
 	lastpausestate=pause;
 	
 	if(zoom != oldZoom) {
-		//got bored so i fixed zoom
-		let tmp = [(xOff - (screenctx.canvas.width/ 2))/px, (yOff - (screenctx.canvas.height/2))/px]
 		oldZoom = lerp(oldZoom,zoom,0.1);
 		px = 20/oldZoom;
-		xOff = tmp[0] * px + (screenctx.canvas.width/ 2)
-		yOff = tmp[1] * px + (screenctx.canvas.height/2)
 	}
 	screenctx.fillStyle = "#ffffff";
 	alive.forEach((k)=>{
@@ -67,13 +62,17 @@ function loop(){
 	
 	screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
 	
+	screenctx.fillStyle = "#111111";
+	screenctx.globalAlpha = 0.3;
+	screenctx.fillRect(screenctx.canvas.width-265,8,192,64);
+	screenctx.globalAlpha = 1.0;
 	
 	screenctx.fillStyle = "#ffffff";
 	screenctx.strokeStyle = "#000000";
-	screenctx.lineWidth=0.5;
+	screenctx.lineWidth=1;
 	screenctx.font = "24px Courier New";
 	if(tps != 0) {
-		drawTextWithOutline("TPS: " + tps,screenctx.canvas.width - 192, 26, 128);
+		drawTextWithOutline("TPS: " + tps,screenctx.canvas.width - 256, 28, 128);
 		if(tpsAccurate / tps > 0.8) screenctx.fillStyle = "#00ff00";
 		else if(tpsAccurate / tps > 0.4) screenctx.fillStyle = "#ffff00";
 		else screenctx.fillStyle = "#ff0000";

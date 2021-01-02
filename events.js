@@ -11,14 +11,16 @@ function attemptEditGrid() {
 	if(draggingmouse && mbutton!=-1 && mbutton!=1) {
 		let xTmp = Math.round(((x - xOff) - ((x - xOff) % px))/px), yTmp = Math.round(((y - yOff) - ((y - yOff) % px))/px);
 		let n = true;
+		let actuallyEdited = false;
 		let acc = [];
 		if(mbutton==2) {
 			alive.forEach((k, i)=>{
 				if(n && k[0] == xTmp && k[1] == yTmp){
 					acc = [...alive.slice(0,i), ...alive.slice(i+1,alive.length)];
+					actuallyEdited=true;
 				}
 			});
-			if(acc.length!=0) {
+			if(actuallyEdited) {
 				alive = acc;
 			}
 		} else if(mbutton==0) {
@@ -108,4 +110,13 @@ screen.addEventListener("mouseup", function(e) {
 screen.addEventListener("wheel", function(e) {
 	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
 	zoom = (zoom < 0.03 ? 0.03 : (zoom > 20 ? 20 : zoom));
+});
+// Meta
+sidebarContainerUnopened.addEventListener("mousedown", function(e) {
+	options=!options;
+	if(options) {
+		sidebarArrow.className = sidebarArrow.className.replace(/(?:^|\s)right(?!\S)/g , ' left')
+	} else {
+		sidebarArrow.className = sidebarArrow.className.replace(/(?:^|\s)left(?!\S)/g , ' right')
+	}
 });
