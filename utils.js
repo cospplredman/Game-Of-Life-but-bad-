@@ -34,5 +34,5 @@ function paste(x,y,t){
 	for(let i = 0; i != alive.length; i++)
 		if(alive[i][0] < x && alive[i][0] > (x + t.w) && alive[i][1] < y && alive[i][1] > (y + t.h))
 			nxt.push(alive[i]);
-	alive - nxt;
+	alive = nxt;
 }
