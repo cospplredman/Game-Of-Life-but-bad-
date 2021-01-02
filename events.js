@@ -37,6 +37,14 @@ function updateTPS(newTPS) {
 		updateInterval=setInterval(update,1000/tps);
 	}
 }
+function openSidebar() {
+	options=!options;
+	if(options) {
+		sidebarArrow.className = sidebarArrow.className.replace(/(?:^|\s)right(?!\S)/g , ' left');
+	} else {
+		sidebarArrow.className = sidebarArrow.className.replace(/(?:^|\s)left(?!\S)/g , ' right');
+	}
+}
 // Keyboard
 window.addEventListener("keydown", function(e) {
 	switch(e.code){
@@ -106,11 +114,5 @@ screen.addEventListener("wheel", function(e) {
 	zoom = (zoom < 0.03 ? 0.03 : (zoom > 20 ? 20 : zoom));
 });
 // Meta
-sidebarContainerUnopened.addEventListener("mousedown", function(e) {
-	options=!options;
-	if(options) {
-		sidebarArrow.className = sidebarArrow.className.replace(/(?:^|\s)right(?!\S)/g , ' left')
-	} else {
-		sidebarArrow.className = sidebarArrow.className.replace(/(?:^|\s)left(?!\S)/g , ' right')
-	}
-});
+sidebarContainerUnopened.addEventListener("mousedown", openSidebar);
+sidebarEdge.addEventListener("mousedown", openSidebar);

@@ -27,6 +27,7 @@ function drawGrid(){
 	screenctx.stroke();
 }
 function loop(){
+	updateSidebar();
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
 	if(grid)
 		drawGrid();

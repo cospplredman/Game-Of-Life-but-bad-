@@ -8,6 +8,18 @@ canvas {
 	cursor: none;
 	z-index: 0;
 }
+#sidebar-container-opened {
+	display:block;
+	position:absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	margin: 0;
+	width: 15%;
+	z-index: 3;
+	background-color:#111111;
+	color:#ffffff;
+}
 #sidebar-container-unopened {
 	position:absolute;
 	top: 0;
