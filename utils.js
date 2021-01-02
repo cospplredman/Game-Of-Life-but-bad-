@@ -5,7 +5,7 @@ function clamp(val, min, max) {
 	return (val <= max ? (val >= min ? val : min) : max);
 }
 
-//for future refrence the copy format is an array with .h and .w properties
+//for future reference the copy format is an array with .h and .w properties
 //the array contains cells
 function copy(x,y,w,h){
 	let ret = [];
