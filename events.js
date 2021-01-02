@@ -10,30 +10,24 @@ window.addEventListener("resize", function(e) {
 function attemptEditGrid() {
 	if(draggingmouse && mbutton!=-1 && mbutton!=1) {
 		let xTmp = Math.round(((x - xOff) - ((x - xOff) % px))/px), yTmp = Math.round(((y - yOff) - ((y - yOff) % px))/px);
-		let n = true;
-		let actuallyEdited = false;
-		let acc = [];
-		if(mbutton==2) {
-			alive.forEach((k, i)=>{
-				if(n && k[0] == xTmp && k[1] == yTmp){
-					acc = [...alive.slice(0,i), ...alive.slice(i+1,alive.length)];
-					actuallyEdited=true;
-				}
-			});
-			if(actuallyEdited) {
-				alive = acc;
-			}
-		} else if(mbutton==0) {
-			n=true;
-			alive.forEach((k, i)=>{
-				if(n && k[0] == xTmp && k[1] == yTmp){
-					n = false;
-				}
-			});
-			if(n) alive.push([xTmp,yTmp]);
+		switch(mbutton){
+			case 2:
+				for(let i = 0; i != alive.length; i++)
+					if(alive[i][0] == xTmp && alive[i][1] == yTmp){
+						alive = alive.slice(0,i).concat(alive.slice(i+1,alive.length));
+						break;
+					}
+			break;
+			case 0:
+				let n=true;
+				for(let i = 0; i != alive.length; i++)
+					if(n && alive[i][0] == xTmp && alive[i][1] == yTmp)
+						n = false;
+				if(n) alive.push([xTmp,yTmp]);
+			break;
+			case -1:
+				draggingmouse=false;
 		}
-	} else if(mbutton==-1) {
-		draggingmouse=false;
 	}
 }
 function updateTPS(newTPS) {

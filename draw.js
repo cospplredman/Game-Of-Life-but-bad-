@@ -17,22 +17,19 @@ function fillTriangle(x1, y1, x2, y2, x3, y3) {
 function drawGrid(){
 	screenctx.strokeStyle = "#222222";
 	screenctx.lineWidth=2;
-	let dimPos = 0;
 	screenctx.beginPath();
-	while(dimPos < screenctx.canvas.width + px){
+	for(let dimPos = 0; dimPos < screenctx.canvas.width + px; dimPos+=px)
 		drawLine(dimPos+(xOff%px),0,dimPos+(xOff%px),screenctx.canvas.height);
-		dimPos += px;
-	}
-	dimPos = 0;
-	while(dimPos < screenctx.canvas.height + px){
+	
+	for(let dimPos = 0;dimPos < screenctx.canvas.height + px; dimPos+=px)
 		drawLine(0,dimPos+(yOff%px),screenctx.canvas.width,dimPos+(yOff%px));
-		dimPos += px;
-	}
+	
 	screenctx.stroke();
 }
 function loop(){
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
-	if(grid) drawGrid();
+	if(grid)
+		drawGrid();
 	
 	if(pause && !lastpausestate)
 		clearInterval(updateInterval);
@@ -45,20 +42,17 @@ function loop(){
 		px = 20/oldZoom;
 	}
 	screenctx.fillStyle = "#ffffff";
-	alive.forEach((k)=>{
-		let x = (k[0]*px);
-		let y = (k[1]*px);
-		if(x >= -xOff-px && x <= screenctx.canvas.width - xOff && y >= -yOff-px && y <= screenctx.canvas.height - yOff){
+	for(let i = 0; i != alive.length; i++){
+		let x = (alive[i][0]*px), y = (alive[i][1]*px);
+		if(x >= -xOff-px && x <= screenctx.canvas.width - xOff && y >= -yOff-px && y <= screenctx.canvas.height - yOff)
 			screenctx.fillRect(x + xOff, y + yOff,px,px);
-		}
-	});
+	}
 	
 	screenctx.fillStyle = "#999999";
-	if(!panmode) xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
-	else {
-		xOff = xOffTmp - (xTmp - x);
-		yOff = yOffTmp - (yTmp - y);
-	}
+	if(!panmode) 
+		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
+	else
+		xOff = xOffTmp - (xTmp - x), yOff = yOffTmp - (yTmp - y);
 	
 	screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
 	
@@ -72,23 +66,28 @@ function loop(){
 	screenctx.lineWidth=1;
 	screenctx.font = "24px Courier New";
 	if(tps != 0) {
-		drawTextWithOutline("TPS: " + tps,screenctx.canvas.width - 256, 28, 128);
-		if(tpsAccurate / tps > 0.8) screenctx.fillStyle = "#00ff00";
-		else if(tpsAccurate / tps > 0.4) screenctx.fillStyle = "#ffff00";
-		else screenctx.fillStyle = "#ff0000";
+		drawTextWithOutline("TPS: " + tps,screenctx.canvas.width - 192, 26, 128);
+		if(tpsAccurate / tps > 0.8)
+			screenctx.fillStyle = "#00ff00";
+		else if(tpsAccurate / tps > 0.4)
+			screenctx.fillStyle = "#ffff00";
+		else 
+			screenctx.fillStyle = "#ff0000";
 		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate * 10) / 10 + ")",screenctx.canvas.width - 256, 50, 192);
-	}
-	else {
+	} else {
 		drawTextWithOutline("Unlimited",screenctx.canvas.width - 192, 26, 128);
-		if(tpsAccurate >= 300) screenctx.fillStyle = "#00ff00";
-		else if(tpsAccurate >= 50) screenctx.fillStyle = "#ffff00";
-		else screenctx.fillStyle = "#ff0000";
+		if(tpsAccurate >= 300)
+			screenctx.fillStyle = "#00ff00";
+		else if(tpsAccurate >= 50) 
+			screenctx.fillStyle = "#ffff00";
+		else 
+			screenctx.fillStyle = "#ff0000";
 		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate * 10) / 10 + ")",screenctx.canvas.width - 256, 50, 192);
 	}
 	screenctx.fillStyle = "#ffffff";
-	if(!pause) {
+	if(!pause)
 		fillTriangle(screenctx.canvas.width - 64, 10, screenctx.canvas.width-64, 74, screenctx.canvas.width-8, 42);
-	} else {
+	else {
 		screenctx.beginPath();
 		screenctx.rect(screenctx.canvas.width - 32, 10, 24, 64);
 		screenctx.rect(screenctx.canvas.width - 64, 10, 24, 64);
