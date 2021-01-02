@@ -5,4 +5,5 @@ Controls (for now):
   left click - spawn cell,
   right click - delete cell,
   mmb - pan,
-  space - toggle pause
+  space - toggle pause,
+  mouse weel - zoom
