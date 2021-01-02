@@ -29,7 +29,7 @@ function rotate(t,f = [[0,1],[-1,0]]){
 
 function paste(x,y,t){
 	let nxt = [];
-	for(let i = 0; i != t.length; t++)
+	for(let i = 0; i != t.length; i++)
 		nxt.push([t[i][0] + x, t[i][1] + y]);
 	for(let i = 0; i != alive.length; i++)
 		if(alive[i][0] < x && alive[i][0] > (x + t.w) && alive[i][1] < y && alive[i][1] > (y + t.h))
