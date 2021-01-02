@@ -1,5 +1,4 @@
 function check(c){
-	alive[c].t = true;
 	let done=[[true,true,true],[true,true,true],[true,true,true]],
 	    a = [
 		[0,0,0,0,0],
@@ -14,10 +13,16 @@ function check(c){
 		let x = alive[i][0] - alive[c][0] , y = alive[i][1] - alive[c][1];
 		if(x >= -2 && x <= 2 && y >= -2 && y <= 2){
 			a[x + 2][y + 2] = 1;
-			if(alive[i].t){
-				let tj = x < 0 ? -1 : -1 + x, tw = y < 0 ? -1 : -1 + y
-				for(let j = x < 0 ? 2 + x : 2; j != tj; j--)
-					for(let w = y < 0 ? 2 + y : 2; w != tw; w--)
+			if(i < c){
+				let j,ww,tj,tw;
+				
+				if(x < 0) tj = -1, j = 2 + x;
+				else tj = x - 1, j = 2;
+				if(y < 0) tw = -1, ww = 2 + y;
+				else tw = y - 1, ww = 2;
+				
+				for(; j != tj; j--)
+					for(let w = ww; w != tw; w--)
 						done[j][w] = false;
 			}
 		}
@@ -68,15 +73,13 @@ function check(c){
 			]
 		]
 	for(let i = 0; i != 3; i++)
-		for(let j = 0; j != 3; j++){
-			if(done[i][j] && ((f[i][j] - a[1 + i][1 + j]) == 3 || (a[1 + i][1 + j] == 1 && f[i][j] == 3))){
+		for(let j = 0; j != 3; j++)
+			if(done[i][j] && ((f[i][j] - a[1 + i][1 + j]) == 3 || (a[1 + i][1 + j] == 1 && f[i][j] == 3)))
 				nxt.push([alive[c][0] - 1 + i, alive[c][1] - 1 + j]);
-			}
-		}
 }
 function update(){
 	let startTime = new Date().getTime();
-	nxt = []
+	nxt = [];
 	for(let i = 0; i != alive.length; i++)
 		check(i);
 	alive = nxt;
