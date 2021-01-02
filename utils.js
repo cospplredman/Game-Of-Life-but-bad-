@@ -32,7 +32,7 @@ function paste(x,y,t){
 	for(let i = 0; i != t.length; i++)
 		nxt.push([t[i][0] + x, t[i][1] + y]);
 	for(let i = 0; i != alive.length; i++)
-		if(alive[i][0] < x && alive[i][0] > (x + t.w) && alive[i][1] < y && alive[i][1] > (y + t.h))
+		if(alive[i][0] < x && alive[i][0] > (x + t.w) || alive[i][1] < y || alive[i][1] > (y + t.h))
 			nxt.push(alive[i]);
 	alive = nxt;
 }
