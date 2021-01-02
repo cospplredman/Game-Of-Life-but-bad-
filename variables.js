@@ -13,6 +13,7 @@ let xOff = 0, yOff = 0,
     grid = true;
 // Cells
 let alive = [];
+let nxt = [];
 // Mouse
 let draggingmouse=false;
 let mbutton=-1;
