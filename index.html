@@ -10,7 +10,25 @@
 			<canvas id="screen">Your browser does not support canvas.</canvas>
 			<div id="sidebar">
 				<div id="sidebar-container-opened" style="left:-20%">
-					test
+					<div id="sidebar-content">
+						Rules<button onclick="toggleSidebarDropdown('ruleset')" class="sidebar-dropdown" id="sidebar-dropdown-ruleset" type=submit>▼</button>
+						<table id="sidebar-ruleset-states" style="display:none">
+							<tr style="height:5px"></tr>
+							<tr>
+								<td>B0</td><td>B1</td><td>B2</td><td>B3</td><td>B4</td><td>B5</td><td>B6</td><td>B7</td><td>B8</td>
+							</tr>
+							<tr>
+								<td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td>
+							</tr>
+							<tr style="height:10px"></tr>
+							<tr>
+								<td>S0</td><td>S1</td><td>S2</td><td>S3</td><td>S4</td><td>S5</td><td>S6</td><td>S7</td><td>S8</td>
+							</tr>
+							<tr>
+								<td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td><td class="checkmark-container"><input type=checkbox><span class="checkmark"></span></td>
+							</tr>
+						</table>
+					</div>
 				</div>
 				<div id="sidebar-container-unopened">
 					<span id="sidebar-arrow" class="arrow right"></span>

@@ -45,6 +45,20 @@ function openSidebar() {
 		sidebarArrow.className = sidebarArrow.className.replace(/(?:^|\s)left(?!\S)/g , ' right');
 	}
 }
+function toggleSidebarDropdown(type) {
+	let dropdownicon = document.getElementById("sidebar-dropdown-" + type);
+	let isActive = false;
+	if(dropdownicon.innerHTML == "▼") {
+		dropdownicon.innerHTML="▲";
+		isActive = true;
+	} else if(dropdownicon.innerHTML == "▲") dropdownicon.innerHTML="▼";
+	switch(type) {
+	case "ruleset":
+		if(isActive) document.getElementById("sidebar-ruleset-states").style="display:block;";
+		else document.getElementById("sidebar-ruleset-states").style="display:none;";
+		break;
+	}
+}
 // Keyboard
 window.addEventListener("keydown", function(e) {
 	switch(e.code){

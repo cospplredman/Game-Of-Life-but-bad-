@@ -8,6 +8,9 @@ canvas {
 	cursor: none;
 	z-index: 0;
 }
+#sidebar-content {
+	margin:20px;
+}
 #sidebar-container-opened {
 	display:block;
 	position:absolute;
@@ -53,6 +56,13 @@ canvas {
 	transform: rotate(45deg);
 	-webkit-transform: rotate(45deg);
 }
+.sidebar-dropdown {
+	background:transparent;
+	border:none;
+	box-shadow:none;
+	outline:none;
+	color:#ffffff;
+}
 #sidebar-arrow {
 	position:absolute;
 	top:50%;
@@ -69,4 +79,7 @@ canvas {
 	width: 25px;
 	z-index: 1;
 	background-image:linear-gradient(to right, #111111, transparent);
+}
+input[type="checkbox"] {
+	transform:scale(1.5);
 }
