@@ -1,33 +1,27 @@
-function check(c){
-	let done=[[true,true,true],[true,true,true],[true,true,true]],
-	    a = [
-		[0,0,0,0,0],
-		[0,0,0,0,0],
-		[0,0,1,0,0],
-		[0,0,0,0,0],
-		[0,0,0,0,0]
-	    ];
-	
+let checks = []
+
+function setup(){
+	checks = []
+	for(let i = 0; i != alive.length; i++)
+		checks.push([
+			[0,0,0,0,0],
+			[0,0,0,0,0],
+			[0,0,1,0,0],
+			[0,0,0,0,0],
+			[0,0,0,0,0]
+	    	]);
 	for(let i = 0; i != alive.length; i++){
-		if(i == c) continue;
-		let x = alive[i][0] - alive[c][0] , y = alive[i][1] - alive[c][1];
-		if(x >= -2 && x <= 2 && y >= -2 && y <= 2){
-			a[x + 2][y + 2] = 1;
-			if(i < c){
-				let j,ww,tj,tw;
-				
-				if(x < 0) tj = -1, j = 2 + x;
-				else tj = x - 1, j = 2;
-				if(y < 0) tw = -1, ww = 2 + y;
-				else tw = y - 1, ww = 2;
-				
-				for(; j != tj; j--)
-					for(let w = ww; w != tw; w--)
-						done[j][w] = false;
-			}
+		for(let j = i + 1; j < alive.length; j++){
+			let x = alive[j][0] - alive[i][0] , y = alive[j][1] - alive[i][1];
+			if(x >= -2 && x <= 2 && y >= -2 && y <= 2)
+				checks[i][x+2][y+2]=1, checks[j][alive[i][0]-alive[j][0]+2][alive[i][1]-alive[j][1]+2] = 4;
 		}
+		check(i);
 	}
-	
+}
+
+function check(c){
+	let a = checks[c];
 	let l = [
 			[
 				a[0][0] + a[0][1] + a[0][2],
@@ -72,16 +66,15 @@ function check(c){
 				l[2][2] + l[3][2] + l[4][2]
 			]
 		]
-	for(let i = 0; i != 3; i++)
-		for(let j = 0; j != 3; j++)
-			if(done[i][j] && ((f[i][j] - a[1 + i][1 + j]) == 3 || (a[1 + i][1 + j] == 1 && f[i][j] == 3)))
-				nxt.push([alive[c][0] - 1 + i, alive[c][1] - 1 + j]);
+		for(let i = 0; i != 3; i++)
+			for(let j = 0; j != 3; j++)
+				if((f[i][j] - a[1 + i][1 + j]) == 3 || (a[1 + i][1 + j] == 1 && f[i][j] == 3))
+					nxt.push([alive[c][0] - 1 + i, alive[c][1] - 1 + j]);
 }
 function update(){
 	let startTime = new Date().getTime();
 	nxt = [];
-	for(let i = 0; i != alive.length; i++)
-		check(i);
+	setup();
 	alive = nxt;
 	tpsAccurate = 1000 / (new Date().getTime() - startTime);
 	tpsAccurate = (tpsAccurate > tps && tps != 0 ? tps : tpsAccurate);
