@@ -2,13 +2,6 @@
 let screen = document.getElementById("screen");
 let screenctx = screen.getContext("2d");
 
-let options = false;
-let sidebarContainerUnopened = document.getElementById("sidebar-container-unopened");
-let sidebarArrow = document.getElementById("sidebar-arrow");
-let sidebarEdge = document.getElementById("sidebar-edge");
-let sidebarContainerOpened = document.getElementById("sidebar-container-opened");
-let sidebarLeftPercent = -15;
-
 // Grid
 let xOff = 0, yOff = 0,
     xOffTmp = 0, yOffTmp = 0,

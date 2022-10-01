@@ -18,7 +18,6 @@ function loop(){
 	}
 
  
-	updateSidebar();
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
         
 	screenctx.fillStyle = "#999999";

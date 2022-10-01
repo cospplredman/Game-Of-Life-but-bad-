@@ -32,12 +32,3 @@ function lerp(start, end, t) {
 function clamp(val, min, max) {
 	return (val <= max ? (val >= min ? val : min) : max);
 }
-function updateSidebar() {
-	let sidebarContainerOpenedPercentMax = 15;
-	let lerpDirection = options?0:-sidebarContainerOpenedPercentMax;
-	sidebarLeftPercent = lerp(sidebarLeftPercent,lerpDirection,0.1);
-	sidebarContainerOpened.style = "left:" + sidebarLeftPercent + "%";
-	sidebarContainerUnopened.style = "left:" + (sidebarLeftPercent+sidebarContainerOpenedPercentMax) + "%";
-	sidebarArrow.style = "left:" + (sidebarLeftPercent+sidebarContainerOpenedPercentMax) + "%";
-	sidebarEdge.style = "left:" + (window.innerWidth * (sidebarLeftPercent + sidebarContainerOpenedPercentMax)/100 + 25) + "px";
-}
