@@ -1,7 +1,9 @@
 function loop(){
-         if(!panmode) //pan 
+	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
+        
+	if(!panmode) //pan 
                  xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
-         else
+        else
                  xOff = xOffTmp - (xTmp - x), yOff = yOffTmp - (yTmp - y);
 	
 	if(zoom != oldZoom) { //zoom
@@ -17,19 +19,7 @@ function loop(){
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
 
- 
-	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
-        
-	screenctx.fillStyle = "#999999";
-        screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
 	
-	if(pause && !lastpausestate)
-		clearInterval(updateInterval);
-	else if(!pause && lastpausestate)
-		updateInterval = setInterval(update,1000/tps);
-	lastpausestate=pause;
-	
-
 	screenctx.fillStyle = "#ffffff";
 	for(let i = 0; i != alive.length; i++){
 		let x = (alive[i][0]*px), y = (alive[i][1]*px);
@@ -40,10 +30,6 @@ function loop(){
 	if(grid)
 		drawGrid();
 	
-	screenctx.fillStyle = "#111111";
-	screenctx.globalAlpha = 0.3;
-	screenctx.fillRect(screenctx.canvas.width-265,8,192,64);
-	screenctx.globalAlpha = 1.0;
 	
 	screenctx.fillStyle = "#ffffff";
 	screenctx.strokeStyle = "#000000";
@@ -82,6 +68,13 @@ function loop(){
 		screenctx.stroke();
 	}
 
+	if(pause && !lastpausestate)
+		clearInterval(updateInterval);
+	else if(!pause && lastpausestate)
+		updateInterval = setInterval(update,1000/tps);
+	lastpausestate=pause;
+
+
 	{ //cursor
 		screenctx.beginPath();
 		screenctx.fillStyle = "#000000";
@@ -90,6 +83,9 @@ function loop(){
 		screenctx.arc(x, y, 6, 0, 2 * Math.PI);
 		screenctx.fill();
 		screenctx.stroke();
+		
+		screenctx.fillStyle = "#999999";
+        	screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
 	}	
 
 	requestAnimationFrame(loop);
