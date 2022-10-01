@@ -1,10 +1,10 @@
 function loop(){
-         if(!panmode) 
+         if(!panmode) //pan 
                  xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
          else
                  xOff = xOffTmp - (xTmp - x), yOff = yOffTmp - (yTmp - y);
 	
-	if(zoom != oldZoom) {
+	if(zoom != oldZoom) { //zoom
 		let xs = (xOff - (screenctx.canvas.width/ 2))/px, ys = (yOff - (screenctx.canvas.height/2))/px;
 		oldZoom = lerp(oldZoom,zoom,0.5);
 		if(Math.abs(oldZoom - zoom) < 0.001)
@@ -82,14 +82,16 @@ function loop(){
 		screenctx.fill();
 		screenctx.stroke();
 	}
-	
-	screenctx.beginPath();
-	screenctx.fillStyle = "#000000";
-	screenctx.strokeStyle = "#ffffff";
-	screenctx.lineWidth=2;
-	screenctx.arc(x, y, 6, 0, 2 * Math.PI);
-	screenctx.fill();
-	screenctx.stroke();
-	
+
+	{ //cursor
+		screenctx.beginPath();
+		screenctx.fillStyle = "#000000";
+		screenctx.strokeStyle = "#ffffff";
+		screenctx.lineWidth=2;
+		screenctx.arc(x, y, 6, 0, 2 * Math.PI);
+		screenctx.fill();
+		screenctx.stroke();
+	}	
+
 	requestAnimationFrame(loop);
 }
