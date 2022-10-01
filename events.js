@@ -102,6 +102,3 @@ screen.addEventListener("wheel", function(e) {
 	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
 	zoom = clamp(zoom, 0.03, 15)
 });
-// Meta
-sidebarContainerUnopened.addEventListener("mousedown", openSidebar);
-sidebarEdge.addEventListener("mousedown", openSidebar);
