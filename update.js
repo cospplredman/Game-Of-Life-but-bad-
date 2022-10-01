@@ -1,78 +1,179 @@
-let rule = [[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
-
-function setup(){
-	let checks = []
-	for(let i = 0; i != alive.length; i++)
-		checks.push([
-			[0,0,0,0,0],
-			[0,0,0,0,0],
-			[0,0,1,0,0],
-			[0,0,0,0,0],
-			[0,0,0,0,0]
-	    	]);
-	for(let i = 0; i != alive.length; i++){
-		for(let j = i + 1; j < alive.length; j++){
-			let x = alive[j][0] - alive[i][0] , y = alive[j][1] - alive[i][1];
-			if(x >= -2 && x <= 2 && y >= -2 && y <= 2)
-				checks[i][x+2][y+2]=1, checks[j][alive[i][0]-alive[j][0]+2][alive[i][1]-alive[j][1]+2] = 9;
-		}
-		let a = checks[i];
-		let l = [
-			[
-				a[0][0] + a[0][1] + a[0][2],
-				a[0][1] + a[0][2] + a[0][3],
-				a[0][2] + a[0][3] + a[0][4]
-			],
-			[
-				a[1][0] + a[1][1] + a[1][2],
-				a[1][1] + a[1][2] + a[1][3],
-				a[1][2] + a[1][3] + a[1][4]
-			],
-			[
-				a[2][0] + a[2][1] + a[2][2],
-				a[2][1] + a[2][2] + a[2][3],
-				a[2][2] + a[2][3] + a[2][4]
-			],
-			[
-				a[3][0] + a[3][1] + a[3][2],
-				a[3][1] + a[3][2] + a[3][3],
-				a[3][2] + a[3][3] + a[3][4]
-			],
-			[
-				a[4][0] + a[4][1] + a[4][2],
-				a[4][1] + a[4][2] + a[4][3],
-				a[4][2] + a[4][3] + a[4][4]
-			]
-		],
-	   	 f = [
-			[
-				l[0][0] + l[1][0] + l[2][0],
-				l[0][1] + l[1][1] + l[2][1],
-				l[0][2] + l[1][2] + l[2][2]
-			],
-			[
-				l[1][0] + l[2][0] + l[3][0],
-				l[1][1] + l[2][1] + l[3][1],
-				l[1][2] + l[2][2] + l[3][2]
-			],
-			[
-				l[2][0] + l[3][0] + l[4][0],
-				l[2][1] + l[3][1] + l[4][1],
-				l[2][2] + l[3][2] + l[4][2]
-			]
-		]
-		for(let q = 0; q != 3; q++)
-			for(let j = 0; j != 3; j++)
-				if(a[1+q][1+j] != 9 && rule[a[1+q][1+j]][f[q][j] - a[1+q][1+j]])
-					nxt.push([alive[i][0] - 1 + q, alive[i][1] - 1 + j]);
+class qtree{
+	constructor(nodes, wpn = 1){
+		this.nodes = nodes;
+		this.wpn = wpn;
+		this.next = undefined;
 	}
+
+	toString(){
+
+		let q = this.nodes.join("");
+		let e = q;
+		if(q.length == 64){
+			e = "";
+			for(let i = 0; i != 8; i++)
+				e += String.fromCharCode(Number.parseInt(q.slice(i*8, (i+1) * 8),2));
+		}
+
+		return e;
+	}
+
+	get(x, y){
+		if(x < 0 || y < 0 || x >= this.wpn*2 || y >= this.wpn*2)
+			return 0;
+		
+		let i = Math.floor(x/this.wpn) + 2*Math.floor(y/this.wpn);
+		if(this.wpn == 1)
+			return this.nodes[i];
+		return this.nodes[i].get(x % this.wpn, y % this.wpn);
+	}
+
+	set(x, y, v, memo = {}){
+		let i = Math.floor(x/this.wpn) + 2*Math.floor(y/this.wpn);
+		let c = new qtree([...this.nodes], this.wpn);
+		if(c.wpn == 1)
+			c.nodes[i] = v;
+		else
+			c.nodes[i] = c.nodes[i].set(x % c.wpn, y % c.wpn, v, memo);
+			
+		if(memo[c.toString()])
+			c = memo[c.toString()];
+		else
+			memo[c.toString()] = c;
+
+		return c;
+	}
+
+	check(x, y){
+		let sum = 	this.get(x-1,y-1) + this.get(x,y-1) + this.get(x+1,y-1) +
+			this.get(x-1,y) + this.get(x+1, y) +
+			this.get(x-1,y+1) + this.get(x,y+1) + this.get(x+1,y+1);
+
+		if(sum == 3)
+			return 1;
+		if(sum == 2 && this.get(x, y))
+			return 1;
+
+		return 0;
+	}
+
+	solve(memo = {}){
+		if(this.next)
+			return this.next;
+
+		if(this.wpn == 1){
+			if(memo["0000"])
+				return this.next = memo["0000"];
+
+			memo["0000"] = new qtree([0,0,0,0]);
+			return this.next = memo["0000"];
+		}
+
+		let tree = new qtree([
+			this.nodes[0].solve(memo),
+			this.nodes[1].solve(memo),
+			this.nodes[2].solve(memo),
+			this.nodes[3].solve(memo)
+		], this.wpn)
+
+		for(let y = 1; y != this.wpn*2 - 1; y++){
+			let x = this.wpn - 1;
+			let xl = this.wpn + 1;
+			if(y >= x && y < xl){
+				x = 1;
+				xl = this.wpn*2 - 1;
+			}
+
+			for(;x!=xl;x++)
+				if(this.check(x, y))
+					tree = tree.set(x, y, 1, memo);
+		}
+
+		if(memo[tree.toString()])
+			tree = memo[tree.toString()];
+		else
+			memo[tree.toString()] = tree;
+
+		return this.next = tree;
+	}
+}
+
+let xd = 0;
+let yd = 0;
+let memo = {"0000": new qtree([0,0,0,0])};
+let qt = new qtree([
+	memo["0000"],
+	memo["0000"],
+	memo["0000"],
+	memo["0000"]
+], 2);
+memo[qt.toString()] = qt;
+
+function eqtree(wpn){
+	if(wpn == 1){
+		if(memo["0000"])
+			return memo["0000"];
+		return memo["0000"] = new qtree([0,0,0,0]);
+	}
+
+	let tree = new qtree([
+		eqtree(wpn/2),
+		eqtree(wpn/2),
+		eqtree(wpn/2),
+		eqtree(wpn/2)
+	],wpn)
+
+	if(memo[tree.toString()])
+		tree = memo[tree.toString()];
+	else
+		memo[tree.toString()] = tree;
+
+	return tree;
+}
+
+function setCell(x, y, v){
+	let i = 0
+	let grow = false;
+
+	if(x >= qt.wpn*2 + xd || x < xd)
+		grow = true;
+	if(x < xd){
+		xd -= 2*qt.wpn
+		i += 1;
+	}
+	
+	if(y >= qt.wpn*2 + yd || y < yd)
+		grow = true;
+	if(y < yd){
+		yd -= 2*qt.wpn
+		i += 2;
+	}
+
+	if(grow){
+		let nodes = [eqtree(qt.wpn), eqtree(qt.wpn), eqtree(qt.wpn), eqtree(qt.wpn)];
+		nodes[i] = qt;
+
+		let k = new qtree(nodes, qt.wpn*2)
+		if(memo[k.toString()])
+			k = memo[k.toString()];
+		else
+			memo[k.toString()] = k;
+
+		qt = k;
+	}
+
+	
+	qt = qt.set(x - xd, y - yd, v, memo);
 }
 
 function update(){
 	let startTime = new Date().getTime();
-	nxt = [];
-	setup();
-	alive = nxt;
-	tpsAccurate = 1000 / (new Date().getTime() - startTime);
-	tpsAccurate = (tpsAccurate > tps && tps != 0 ? tps : tpsAccurate);
+	
+	qt = qt.solve(memo);
+
+	let endTime = new Date().getTime();
+	tpsAccurate = 1000 / (endTime - startTime);
+
+	if(tps != 0)
+		tpsAccurate = Math.min(tps, tpsAccurate);
 }

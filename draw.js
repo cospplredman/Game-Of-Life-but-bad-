@@ -19,13 +19,16 @@ function loop(){
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
 
+	screenctx.fillStyle = "#ff0000";
+	screenctx.fillRect(xd*px + xOff, yd*px + yOff, qt.wpn*2*px, qt.wpn*2*px)
 	
 	screenctx.fillStyle = "#ffffff";
-	for(let i = 0; i != alive.length; i++){
-		let x = (alive[i][0]*px), y = (alive[i][1]*px);
-		if(x >= -xOff-px && x <= screenctx.canvas.width - xOff && y >= -yOff-px && y <= screenctx.canvas.height - yOff)
-			screenctx.fillRect(x + xOff, y + yOff,px,px);
-	}
+	for(let x = -xOff-px; x <= screenctx.canvas.width - xOff; x += px)
+		for(let y = -yOff-px; y <= screenctx.canvas.height - yOff; y += px){
+			let xp = Math.floor(x/px), yp = Math.floor(y/px);
+			if(qt.get(xp - xd, yp - yd))
+				screenctx.fillRect(xp*px + xOff, yp*px + yOff, px, px);
+		}
 	
 	if(grid)
 		drawGrid();
@@ -76,6 +79,9 @@ function loop(){
 
 
 	{ //cursor
+		screenctx.fillStyle = "#999999";
+        	screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
+		
 		screenctx.beginPath();
 		screenctx.fillStyle = "#000000";
 		screenctx.strokeStyle = "#ffffff";
@@ -83,9 +89,6 @@ function loop(){
 		screenctx.arc(x, y, 6, 0, 2 * Math.PI);
 		screenctx.fill();
 		screenctx.stroke();
-		
-		screenctx.fillStyle = "#999999";
-        	screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
 	}	
 
 	requestAnimationFrame(loop);

@@ -44,18 +44,10 @@ function attemptEditGrid() {
 		let xTmp = Math.round(((x - xOff) - ((x - xOff) % px))/px), yTmp = Math.round(((y - yOff) - ((y - yOff) % px))/px);
 		switch(mbutton){
 			case 2:
-				for(let i = 0; i != alive.length; i++)
-					if(alive[i][0] == xTmp && alive[i][1] == yTmp){
-						alive = alive.slice(0,i).concat(alive.slice(i+1,alive.length));
-						break;
-					}
+				setCell(xTmp, yTmp, 0);
 			break;
 			case 0:
-				let n=true;
-				for(let i = 0; i != alive.length; i++)
-					if(n && alive[i][0] == xTmp && alive[i][1] == yTmp)
-						n = false;
-				if(n) alive.push([xTmp,yTmp]);
+				setCell(xTmp, yTmp, 1);
 			break;
 		}
 	}

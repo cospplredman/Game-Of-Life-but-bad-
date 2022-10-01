@@ -30,7 +30,7 @@ let zoom = 1;
 let updateInterval = null
 
 let tps = 10;
-let tpsAccurate = 10;
+let tpsAccurate = 0;
 
 let lastpausestate = true;
 let pause = true;
