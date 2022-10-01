@@ -74,9 +74,6 @@ window.addEventListener("keydown", function(e) {
 	case "KeyG":
 		grid = !grid;
 		break;
-	case "F1":
-		options = !options;
-		break;
 	}
 });
 // Mouse
@@ -125,7 +122,8 @@ screen.addEventListener("mouseup", function(e) {
 });
 screen.addEventListener("wheel", function(e) {
 	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
-	zoom = (zoom < 0.03 ? 0.03 : (zoom > 20 ? 20 : zoom));
+	zoom = clamp(zoom, 0.03, 20)
+	//zoom = (zoom < 0.03 ? 0.03 : (zoom > 20 ? 20 : zoom));
 });
 // Meta
 sidebarContainerUnopened.addEventListener("mousedown", openSidebar);

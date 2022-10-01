@@ -1,8 +1,28 @@
 function loop(){
+         if(!panmode) 
+                 xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
+         else
+                 xOff = xOffTmp - (xTmp - x), yOff = yOffTmp - (yTmp - y);
+	
+	if(zoom != oldZoom) {
+		let tmp = [(xOff - (screenctx.canvas.width/ 2))/px, (yOff - (screenctx.canvas.height/2))/px]
+		oldZoom = lerp(oldZoom,zoom,0.5);
+		if(Math.abs(oldZoom - zoom) < 0.001)
+			oldZoom = zoom;
+
+		px = Math.ceil(20/oldZoom) + 1;
+		xOff = Math.floor(tmp[0] * px + (screenctx.canvas.width/ 2))
+		yOff = Math.floor(tmp[1] * px + (screenctx.canvas.height/2))
+                
+		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
+	}
+
+ 
 	updateSidebar();
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
-	if(grid)
-		drawGrid();
+        
+	screenctx.fillStyle = "#999999";
+        screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
 	
 	if(pause && !lastpausestate)
 		clearInterval(updateInterval);
@@ -10,14 +30,7 @@ function loop(){
 		updateInterval = setInterval(update,1000/tps);
 	lastpausestate=pause;
 	
-	if(zoom != oldZoom) {
-		//got bored so i fixed zoom
-		let tmp = [(xOff - (screenctx.canvas.width/ 2))/px, (yOff - (screenctx.canvas.height/2))/px]
-		oldZoom = lerp(oldZoom,zoom,0.1);
-		px = 20/oldZoom;
-		xOff = tmp[0] * px + (screenctx.canvas.width/ 2)
-		yOff = tmp[1] * px + (screenctx.canvas.height/2)
-	}
+
 	screenctx.fillStyle = "#ffffff";
 	for(let i = 0; i != alive.length; i++){
 		let x = (alive[i][0]*px), y = (alive[i][1]*px);
@@ -25,13 +38,8 @@ function loop(){
 			screenctx.fillRect(x + xOff, y + yOff,px,px);
 	}
 	
-	screenctx.fillStyle = "#999999";
-	if(!panmode) 
-		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
-	else
-		xOff = xOffTmp - (xTmp - x), yOff = yOffTmp - (yTmp - y);
-	
-	screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
+	if(grid)
+		drawGrid();
 	
 	screenctx.fillStyle = "#111111";
 	screenctx.globalAlpha = 0.3;
@@ -42,6 +50,7 @@ function loop(){
 	screenctx.strokeStyle = "#000000";
 	screenctx.lineWidth=1;
 	screenctx.font = "24px Courier New";
+
 	if(tps != 0) {
 		drawTextWithOutline("TPS: " + tps,screenctx.canvas.width - 192, 26, 128);
 		if(tpsAccurate / tps > 0.8)
@@ -61,7 +70,9 @@ function loop(){
 			screenctx.fillStyle = "#ff0000";
 		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate * 10) / 10 + ")",screenctx.canvas.width - 256, 50, 192);
 	}
+
 	screenctx.fillStyle = "#ffffff";
+
 	if(!pause)
 		fillTriangle(screenctx.canvas.width - 64, 10, screenctx.canvas.width-64, 74, screenctx.canvas.width-8, 42);
 	else {
