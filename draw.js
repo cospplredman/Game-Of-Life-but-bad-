@@ -5,14 +5,14 @@ function loop(){
                  xOff = xOffTmp - (xTmp - x), yOff = yOffTmp - (yTmp - y);
 	
 	if(zoom != oldZoom) {
-		let tmp = [(xOff - (screenctx.canvas.width/ 2))/px, (yOff - (screenctx.canvas.height/2))/px]
+		let xs = (xOff - (screenctx.canvas.width/ 2))/px, ys = (yOff - (screenctx.canvas.height/2))/px;
 		oldZoom = lerp(oldZoom,zoom,0.5);
 		if(Math.abs(oldZoom - zoom) < 0.001)
 			oldZoom = zoom;
 
 		px = Math.ceil(20/oldZoom) + 1;
-		xOff = Math.floor(tmp[0] * px + (screenctx.canvas.width/ 2))
-		yOff = Math.floor(tmp[1] * px + (screenctx.canvas.height/2))
+		xOff = Math.floor(xs * px + (screenctx.canvas.width/ 2))
+		yOff = Math.floor(ys * px + (screenctx.canvas.height/2))
                 
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
