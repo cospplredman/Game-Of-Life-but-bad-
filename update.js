@@ -1,43 +1,67 @@
-function qtree(nodes, wpn){
-	tree = Object.create(null);
-	Object.setPrototypeOf(tree,qtree.prototype);
-	tree.wpn = wpn
+function qtree(nodes, wpn, hash = undefined){
+	this.wpn = wpn
 	for(let i = 0; i != 4; i++)
-		tree[i] = nodes[i];
+		this[i] = nodes[i];
 
-	tree.next = undefined;
-	return tree;
+	this.next = undefined;
+	this.hash = hash;
+}
+
+qtree.prototype.equals = function(a){
+	if(a.wpn != this.wpn)
+		return false;
+
+	for(let i = 0; i != 4; i++)
+		if(a[i] instanceof qtree){
+			if(!this[i].equals(a[i]))
+				return false;
+		}else if(!a[i] == this[i])
+			return false;
+	return true;
 }
 
 qtree.prototype.toString = function(){
-	q = "";
+	if(this.hash)
+		return this.hash;
+	let q = 0;
+	let mul = [1, 11, 101, 1007];
 	for(let i = 0; i != 4; i++)
-		q += this[i]?.toString();
-	
-	let e = q;
-
-	return e;
+		q += mul[i] * this[i]?.toString();
+	this.hash = q;
+	return q;
 	
 }
 
+qtree.prototype.print = function(){
+	let l = "";
+	for(let i = 0; i != this.wpn*2; i++){
+		for(let j = 0; j != this.wpn*2; j++)
+			l += " " + this.get(j, i);
+		l += "\n";
+	}
+	console.log(l);
+}
+
 qtree.prototype.get = function(x, y){
-	
 	if(x < 0 || y < 0 || x >= this.wpn*2 || y >= this.wpn*2)
 		return 0;
 	
 	let i = Math.floor(x/this.wpn) + 2*Math.floor(y/this.wpn);
 	if(this.wpn == 1)
 		return this[i];
+
 	return this[i].get(x % this.wpn, y % this.wpn);
 }
 
 qtree.prototype.set = function(x, y, v){
+	this.hash = undefined;
 	let i = Math.floor(x/this.wpn) + 2*Math.floor(y/this.wpn);
 
 	if(this.wpn == 1)
 		this[i] = v;
 	else
 		this[i].set(x % this.wpn, y % this.wpn, v);
+
 	return this;
 }
 
@@ -49,17 +73,25 @@ qtree.prototype.copy = function(){
 		else
 			nodes[i] = this[i];
 
-	return qtree(nodes, this.wpn);
+	return new qtree(nodes, this.wpn, this.hash);
 }
 
 qtree.prototype.memoize = function(memo = {}){
+	let hash = this.toString();
+	if(memo[hash]){
+		let arr = memo[hash];
+		for(let el in arr)
+			if(arr[el].equals(this))
+				return arr[el];
+	}
+
+	let arr = memo[hash] ??= [];
 	for(let i = 0; i != 4; i++)
 		if(this[i] instanceof qtree)
 			this[i] = this[i].memoize(memo);
-
-	if(this.toString().length > 16)
-		return this;
-	return memo[this] ?? (memo[this] = this);
+	
+	arr.push(this);
+	return this;
 }
 
 qtree.prototype.check = function(x, y){
@@ -72,30 +104,100 @@ qtree.prototype.check = function(x, y){
 
 	return 0;
 }
+
+qtree.prototype.solvev = function(o){
+
+	if(this.hash == 0)
+		return 0;
+	if(o.wpn == 1)
+		return 1;
+
+	let nt = new qtree([
+		this[0][1], this[1][0],
+		this[0][3], this[1][2]
+	], this[0].wpn).solvev(new qtree([
+		o[0][1], o[1][0],
+		o[0][3], o[1][2]
+	],o[0].wpn));
+
+	let nb = new qtree([
+		this[2][1], this[3][0],
+		this[2][3], this[3][2]
+	], this[0].wpn).solvev(new qtree([
+		o[2][1], o[3][0],
+		o[2][3], o[3][2]
+	], o[0].wpn));
+
+	if(nt == 0 && nb == 0)
+		return 0;
+
+	let x = this.wpn - 1, y = this.wpn - 1;
+
+	o.set(x, y, this.check(x, y));
+	o.set(x + 1, y, this.check(x + 1, y));
+	o.set(x, y + 1, this.check(x, y + 1));
+	o.set(x + 1, y + 1, this.check(x + 1, y + 1));
+	
+	return 1;
+}
+
+qtree.prototype.solveh = function(o, i = true){
+
+	if(this.hash == 0)
+		return 0;
+	if(o.wpn == 1)
+		return 1;
+
+	let nt = new qtree([
+		this[0][2], this[0][3],
+		this[2][0], this[2][1]
+	], this[0].wpn).solveh(new qtree([
+		o[0][2], o[0][3],
+		o[2][0], o[2][1]
+	],o[0].wpn), false);
+
+	let nb = new qtree([
+		this[1][2], this[1][3],
+		this[3][0], this[3][1]
+	], this[0].wpn).solveh(new qtree([
+		o[1][2], o[1][3],
+		o[3][0], o[3][1]
+	], o[0].wpn), false);
+
+	if(nt == 0 && nb == 0)
+		return 0;
+
+	if(i)
+		return 1;
+
+	let x = this.wpn - 1, y = this.wpn - 1;
+
+	o.set(x, y, this.check(x, y));
+	o.set(x + 1, y, this.check(x + 1, y));
+	o.set(x, y + 1, this.check(x, y + 1));
+	o.set(x + 1, y + 1, this.check(x + 1, y + 1));
+	
+	return 1;
+}
 	
 qtree.prototype.solve = function(memo = {}){
 	if(this.next)
 		return this.next;
 
-	tree = qtree([
-		this[0]?.solve?.(memo)?.copy() ?? 0,
-		this[1]?.solve?.(memo)?.copy() ?? 0,
-		this[2]?.solve?.(memo)?.copy() ?? 0,
-		this[3]?.solve?.(memo)?.copy() ?? 0
+	if(this.wpn == 1){
+		this.next = new qtree([0, 0, 0, 0], 1).memoize();
+		return this.next;
+	}
+
+	tree = new qtree([
+		this[0].solve(memo).copy(),
+		this[1].solve(memo).copy(),
+		this[2].solve(memo).copy(),
+		this[3].solve(memo).copy()
 	], this.wpn);
 
-	for(let y = 1; y != this.wpn*2 - 1; y++){
-		let x = this.wpn - 1;
-		let xl = this.wpn + 1;
-		if(y >= x && y < xl){
-			x = 1;
-			xl = this.wpn*2 - 1;
-		}
-		for(;x!=xl;x++){
-			if(this.check(x, y))
-				tree = tree.set(x, y, 1);
-		}
-	}
+	this.solvev(tree);
+	this.solveh(tree);
 
 	this.next = tree.memoize(memo);
 	Object.freeze(this);
@@ -104,10 +206,9 @@ qtree.prototype.solve = function(memo = {}){
 
 function etree(wpn){
 	if(wpn == 1)
-		return qtree([0,0,0,0], wpn);
+		return new qtree([0,0,0,0], wpn);
 	let a = etree(wpn/2);
-	return qtree([a,a,a,a], wpn);
-	
+	return new qtree([a,a,a,a], wpn);
 }
 
 let xd = 0;
@@ -139,7 +240,7 @@ function setCell(x, y, v){
 		let nodes = [a,a,a,a];
 		nodes[i] = qt;
 
-		let k = qtree(nodes, qt.wpn*2)
+		let k = new qtree(nodes, qt.wpn*2)
 		qt = k;
 	}
 

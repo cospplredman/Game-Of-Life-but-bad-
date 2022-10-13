@@ -19,6 +19,7 @@ function loop(){
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
 
+	
 	screenctx.fillStyle = "#ff0000";
 	screenctx.fillRect(xd*px + xOff, yd*px + yOff, qt.wpn*2*px, qt.wpn*2*px)
 	
