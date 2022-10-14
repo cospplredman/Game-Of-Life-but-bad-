@@ -27,8 +27,9 @@ function loop(){
 	for(let x = -xOff-px; x <= screenctx.canvas.width - xOff; x += px)
 		for(let y = -yOff-px; y <= screenctx.canvas.height - yOff; y += px){
 			let xp = Math.floor(x/px), yp = Math.floor(y/px);
-			if(qt.get(xp - xd, yp - yd))
-				screenctx.fillRect(xp*px + xOff, yp*px + yOff, px, px);
+			if(!(xp - xd < 0 || xp - xd >= 2*qt.wpn || yp - yd < 0 || yp - yd >= 2*qt.wpn))
+				if(qt.get(xp - xd, yp - yd))
+					screenctx.fillRect(xp*px + xOff, yp*px + yOff, px, px);
 		}
 	
 	if(grid)
