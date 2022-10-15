@@ -19,15 +19,6 @@ function loop(){
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
 
-	screenctx.fillStyle = "#ffffff";
-	/*for(let x = -xOff-px; x <= screenctx.canvas.width - xOff; x += px)
-		for(let y = -yOff-px; y <= screenctx.canvas.height - yOff; y += px){
-			let xp = Math.floor(x/px), yp = Math.floor(y/px);
-			if(!(xp - xd < 0 || xp - xd >= 2*qt.wpn || yp - yd < 0 || yp - yd >= 2*qt.wpn))
-				if(qt.get(xp - xd, yp - yd))
-					screenctx.fillRect(xp*px + xOff, yp*px + yOff, px, px);
-		}
-*/
 	alive = [];
 	qt.map(
 		Math.floor(-xOff/px) + xd, 
@@ -38,10 +29,10 @@ function loop(){
 	);
 
 
-
+	screenctx.fillStyle = "#ffffff";
 	for(let i in alive){
 		let xp = alive[i][0], yp = alive[i][1];
-		screenctx.fillRect(xp*px + xOff%px, yp*px + yOff%px, px, px);
+		screenctx.fillRect(xp*px + Math.floor(-xOff/px)*px + xOff, yp*px + Math.floor(-yOff/px)*px + yOff, px, px);
 	}
 
 
@@ -95,7 +86,7 @@ function loop(){
 
 	{ //cursor
 		screenctx.fillStyle = "#999999";
-        	screenctx.fillRect(x - ((x - xOff) % px), y - ((y - yOff) % px),px,px);
+        	screenctx.fillRect(Math.floor((x - xOff)/px)*px + xOff, Math.floor((y - yOff)/px)*px + yOff,px,px);
 		
 		screenctx.beginPath();
 		screenctx.fillStyle = "#000000";

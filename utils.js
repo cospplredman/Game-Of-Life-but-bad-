@@ -41,7 +41,7 @@ function updateTPS(newTPS) {
 }
 function attemptEditGrid() {
 	if(draggingmouse && mbutton!=-1 && mbutton!=1) {
-		let xTmp = Math.round(((x - xOff) - ((x - xOff) % px))/px), yTmp = Math.round(((y - yOff) - ((y - yOff) % px))/px);
+		let xTmp = Math.floor((x - xOff)/px), yTmp = Math.floor((y - yOff)/px);
 		switch(mbutton){
 			case 2:
 				setCell(xTmp, yTmp, 0);
