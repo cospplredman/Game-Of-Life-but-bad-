@@ -19,19 +19,32 @@ function loop(){
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
 
-	
-	screenctx.fillStyle = "#ff0000";
-	screenctx.fillRect(xd*px + xOff, yd*px + yOff, qt.wpn*2*px, qt.wpn*2*px)
-	
 	screenctx.fillStyle = "#ffffff";
-	for(let x = -xOff-px; x <= screenctx.canvas.width - xOff; x += px)
+	/*for(let x = -xOff-px; x <= screenctx.canvas.width - xOff; x += px)
 		for(let y = -yOff-px; y <= screenctx.canvas.height - yOff; y += px){
 			let xp = Math.floor(x/px), yp = Math.floor(y/px);
 			if(!(xp - xd < 0 || xp - xd >= 2*qt.wpn || yp - yd < 0 || yp - yd >= 2*qt.wpn))
 				if(qt.get(xp - xd, yp - yd))
 					screenctx.fillRect(xp*px + xOff, yp*px + yOff, px, px);
 		}
-	
+*/
+	alive = [];
+	qt.map(
+		Math.floor(-xOff/px) + xd, 
+		Math.floor(-yOff/px) + yd,
+		Math.floor(screenctx.canvas.width/px + 1),
+		Math.floor(screenctx.canvas.height/px + 1),
+		(x, y, v) => {if(v) alive.push([x, y])}
+	);
+
+
+
+	for(let i in alive){
+		let xp = alive[i][0], yp = alive[i][1];
+		screenctx.fillRect(xp*px + xOff%px, yp*px + yOff%px, px, px);
+	}
+
+
 	if(grid)
 		drawGrid();
 	
