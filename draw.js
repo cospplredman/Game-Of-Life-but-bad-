@@ -1,6 +1,17 @@
+async function lop(){
+	alive = await getCells(
+		-Math.floor(xOff/px), 
+		-Math.floor(yOff/px),
+		Math.floor(screenctx.canvas.width/px + 1),
+		Math.floor(screenctx.canvas.height/px + 1)
+	);
+
+	tpsAccurate = await getTps();
+	requestAnimationFrame(lop);
+}
+
 function loop(){
-	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
-        
+	let q = alive;
 	if(!panmode) //pan 
                  xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
         else
@@ -19,20 +30,12 @@ function loop(){
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
 
-	alive = [];
-	qt.map(
-		Math.floor(-xOff/px) + xd, 
-		Math.floor(-yOff/px) + yd,
-		Math.floor(screenctx.canvas.width/px + 1),
-		Math.floor(screenctx.canvas.height/px + 1),
-		(x, y, v) => {if(v) alive.push([x, y])}
-	);
 
-
+	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
 	screenctx.fillStyle = "#ffffff";
-	for(let i in alive){
-		let xp = alive[i][0], yp = alive[i][1];
-		screenctx.fillRect(xp*px + Math.floor(-xOff/px)*px + xOff, yp*px + Math.floor(-yOff/px)*px + yOff, px, px);
+	for(let i in q){
+		let xp = q[i][0], yp = q[i][1];
+		screenctx.fillRect(xp*px + xOff, yp*px + yOff, px, px);
 	}
 
 
