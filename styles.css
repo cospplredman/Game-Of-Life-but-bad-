@@ -1,85 +1,14 @@
+body{
+	background-color: black;
+}
+
 canvas {
 	position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-	cursor: none;
-	z-index: 0;
-}
-#sidebar-content {
-	margin:20px;
-}
-#sidebar-container-opened {
-	display:block;
-	position:absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	margin: 0;
-	width: 15%;
-	z-index: 3;
-	background-color:#111111;
-	color:#ffffff;
-}
-#sidebar-container-unopened {
-	position:absolute;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	margin: 0;
-	width: 25px;
-	z-index: 1;
-	background-color:#111111;
-}
-.arrow {
-	border: solid #ffffff;
-	border-width: 0 3px 3px 0;
-	display: inline-block;
-	padding: 3px;
-}
-.right {
-	transform: rotate(-45deg);
-	-webkit-transform: rotate(-45deg);
-}
-.left {
-	transform: rotate(135deg);
-	-webkit-transform: rotate(135deg);
-}
-.up {
-	transform: rotate(-135deg);
-	-webkit-transform: rotate(-135deg);
-}
-.down {
-	transform: rotate(45deg);
-	-webkit-transform: rotate(45deg);
-}
-.sidebar-dropdown {
-	background:transparent;
-	border:none;
-	box-shadow:none;
-	outline:none;
-	color:#ffffff;
-}
-#sidebar-arrow {
-	position:absolute;
-	top:50%;
-	z-index: 1;
-	background-color:#111111;
-}
-#sidebar-edge {
-	position:absolute;
-	top: 0;
-	bottom: 0;
-	left: 25px;
-	right: 0;
-	margin: 0;
-	width: 25px;
-	z-index: 1;
-	background-image:linear-gradient(to right, #111111, transparent);
-}
-input[type="checkbox"] {
-	transform:scale(1.5);
+	margin: auto;
+	cursor: none;
+	z-index: 0;
 }

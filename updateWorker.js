@@ -277,7 +277,8 @@ function forget(){
 	for(let i in memo){
 		for(let j in memo[i]){
 			//optimization idea:
-			//	check if the next item is useful in the next step size.
+			//	check if the next item is useful in the next step sizej.
+			//
 			memo[i][j].next = undefined;
 			delete memo[i][j];
 		}
@@ -305,8 +306,8 @@ function setCell(x, y, v){
 function update(){
 	if(tps == 0){
 		if(step != (qt.depth - 2)){
-			step = qt.depth - 2;
 			forget();
+			step = qt.depth - 2;
 			qt.remember();
 		}
 		let st = performance.now();
@@ -315,8 +316,8 @@ function update(){
 		tpsAccurate = 1000 / (ed - st + 0.5) * (1 << (qt.depth - 2));
 	}else{
 		if(step != 0){
-			step = 0;
 			forget();
+			step = 0;
 			qt.remember();
 		}
 		let st = performance.now();

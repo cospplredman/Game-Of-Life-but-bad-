@@ -2,6 +2,9 @@
 let screen = document.getElementById("screen");
 let screenctx = screen.getContext("2d");
 
+screenctx.canvas.width = window.innerWidth;
+screenctx.canvas.height = window.innerHeight;
+
 // Grid
 let xOff = 0, yOff = 0,
     px = 20,

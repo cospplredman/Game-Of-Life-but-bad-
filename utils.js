@@ -36,6 +36,26 @@ function clamp(val, min, max) {
 	return (val <= max ? (val >= min ? val : min) : max);
 }
 
+function place(arr){
+	for(let i = 0; i < arr.length; i++)
+		setCell(arr[i][0], arr[i][1], 1);
+}
+
+function PT(str){
+	let a = str.split("\n");
+	let r = [];
+	for(let i = 0, k = 0; i < a.length; i++){
+		if(a[i][0] == "!")
+			continue;
+		for(let j = 0; j != a[i].length; j++)
+			if(a[i][j] == "O")
+				r.push([j, k]);
+		k++;
+	}
+	return r;
+
+}
+
 function attemptEditGrid() {
 	if(draggingmouse && mbutton!=-1 && mbutton!=1) {
 		let xTmp = Math.floor((x - xOff)/px), yTmp = Math.floor((y - yOff)/px);

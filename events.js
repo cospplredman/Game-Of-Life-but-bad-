@@ -80,7 +80,7 @@ screen.addEventListener("wheel", function(e){
 	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
 	zoom = clamp(zoom, 0.03, 20);
 	
-	px = (20/zoom);
-	xOff = xs * px + x;
-	yOff = ys * px + y;
+	px = Math.ceil(20/zoom);
+	xOff = Math.ceil(xs * px) + x;
+	yOff = Math.ceil(ys * px) + y;
 });
