@@ -2,9 +2,11 @@ function drawLine(x1, y1, x2, y2) {
 	screenctx.moveTo(x1, y1);
 	screenctx.lineTo(x2, y2);
 }
+
 function drawTextWithOutline(txt, x, y, maxWidth) {
 	screenctx.fillText(txt,x, y, maxWidth);
 }
+
 function fillTriangle(x1, y1, x2, y2, x3, y3) {
 	screenctx.beginPath();
 	screenctx.moveTo(x1, y1);
@@ -14,6 +16,7 @@ function fillTriangle(x1, y1, x2, y2, x3, y3) {
 	screenctx.fill();
 	screenctx.stroke();
 }
+
 function drawGrid(){
 	screenctx.beginPath();
 	for(let dimPos = 0; dimPos < screenctx.canvas.width + px; dimPos+=px)
@@ -24,9 +27,11 @@ function drawGrid(){
 	
 	screenctx.stroke();
 }
+
 function lerp(start, end, t) {
 	return (1-t)*start+t*end;
 }
+
 function clamp(val, min, max) {
 	return (val <= max ? (val >= min ? val : min) : max);
 }

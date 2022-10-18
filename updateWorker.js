@@ -276,6 +276,8 @@ function center(n){
 function forget(){
 	for(let i in memo){
 		for(let j in memo[i]){
+			//optimization idea:
+			//	check if the next item is useful in the next step size.
 			memo[i][j].next = undefined;
 			delete memo[i][j];
 		}
@@ -283,15 +285,14 @@ function forget(){
 	}
 }
 
-
+let step = 0;
 
 //=====================================================================================================================//
 
 
 
-let qt = etree(16);
+let qt = etree(30);
 let hw = 1 << qt.depth;
-let step = 0;
 let tpsAccurate = 0;
 let pause = true;
 let updateInterval;

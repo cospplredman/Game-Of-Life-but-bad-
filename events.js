@@ -51,6 +51,9 @@ screen.addEventListener("mousedown", function(e) {
 
 });
 screen.addEventListener("mousemove",function(e) {
+	if(panmode)
+		xOff -= x - e.clientX, yOff -= y - e.clientY
+
 	x = e.clientX, y = e.clientY;
 	attemptEditGrid();
 });
@@ -71,7 +74,13 @@ screen.addEventListener("mouseup", function(e) {
       break;
   }
 });
-screen.addEventListener("wheel", function(e) {
+screen.addEventListener("wheel", function(e){ 
+	let xs = (xOff - x)/px, ys = (yOff - y)/px;
+
 	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
-	zoom = clamp(zoom, 0.03, 15)
+	zoom = clamp(zoom, 0.03, 20);
+	
+	px = (20/zoom);
+	xOff = xs * px + x;
+	yOff = ys * px + y;
 });

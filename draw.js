@@ -11,40 +11,22 @@ async function lop(){
 }
 
 function loop(){
-	let q = alive;
-	if(!panmode) //pan 
-                 xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
-        else
-                 xOff = xOffTmp - (xTmp - x), yOff = yOffTmp - (yTmp - y);
-	
-	if(zoom != oldZoom) { //zoom
-		let xs = (xOff - (screenctx.canvas.width/ 2))/px, ys = (yOff - (screenctx.canvas.height/2))/px;
-		oldZoom = lerp(oldZoom,zoom,0.5);
-		if(Math.abs(oldZoom - zoom) < 0.001)
-			oldZoom = zoom;
-
-		px = Math.ceil(20/oldZoom) + 1;
-		xOff = Math.floor(xs * px + (screenctx.canvas.width/ 2));
-		yOff = Math.floor(ys * px + (screenctx.canvas.height/2));
-                
-		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
-	}
-
-
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
 	screenctx.fillStyle = "#ffffff";
 	
 	{ //cells
-		for(let i in q)
-			screenctx.fillRect(q[i][0]*px + xOff, q[i][1]*px + yOff, px, px);
+		for(let i in alive)
+			screenctx.fillRect(alive[i][0]*px + xOff, alive[i][1]*px + yOff, px, px);
 	}
 
-	screenctx.strokeStyle = "#222222";
-	screenctx.lineWidth=px/50;
-	if(grid) //grid
+	if(grid){ //grid
+		screenctx.strokeStyle = "#222222";
+		screenctx.lineWidth = px/50;
 		drawGrid();
-	
-	screenctx.lineWidth=2;
+		screenctx.strokeStyle = "#ffffff";
+		screenctx.lineWidth = 1;
+	}
+
 	if(!pause) //pause state symbol
 		fillTriangle(screenctx.canvas.width - 64, 10, screenctx.canvas.width-64, 74, screenctx.canvas.width-8, 42);
 	else {
