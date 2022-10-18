@@ -15,9 +15,8 @@ let xOff = 0, yOff = 0,
 
 // Cells
 let alive = [];
-let nxt = [];
-// Mouse
 
+// Mouse
 let draggingmouse=false;
 let mbutton=-1;
 let panmode = false;
@@ -27,10 +26,6 @@ let oldZoom = 1;
 let zoom = 1;
 
 // Update loop
-let updateInterval = null
-
 let tps = 10;
 let tpsAccurate = 0;
-
-let lastpausestate = true;
 let pause = true;

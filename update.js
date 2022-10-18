@@ -1,5 +1,4 @@
 let updater = new Worker("updateWorker.js");
-let hw = 0;
 
 let get = async function(message){
 	return new Promise((r,re) => {
@@ -26,5 +25,13 @@ let setCell = function(x, y, v){
 }
 
 let update = function(){
-	updater.postMessage(["update", [tps]]);
+	updater.postMessage(["update", []]);
+}
+
+function setTps(newTPS) {
+	updater.postMessage(["setTps", [newTPS]]);
+}
+
+function setPause(v){
+	updater.postMessage(["setPause", [v]]);
 }

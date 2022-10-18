@@ -10,13 +10,17 @@ window.addEventListener("resize", function(e) {
 window.addEventListener("keydown", function(e) {
 	switch(e.code){
 	case "ArrowUp":
-		updateTPS(tps+1);
+		tps += 1;
+		setTps(1);
 		break;
 	case "ArrowDown":
-		updateTPS(tps-1);
+		tps -= 1;
+		tps = tps < 0 ? 0 : tps;
+		setTps(-1);
 		break;
 	case "Space":
-		pause = !pause;
+		setPause(!pause);
+		pause = !pause
 		break;
 	case "KeyG":
 		grid = !grid;

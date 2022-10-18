@@ -24,8 +24,8 @@ function loop(){
 			oldZoom = zoom;
 
 		px = Math.ceil(20/oldZoom) + 1;
-		xOff = Math.floor(xs * px + (screenctx.canvas.width/ 2))
-		yOff = Math.floor(ys * px + (screenctx.canvas.height/2))
+		xOff = Math.floor(xs * px + (screenctx.canvas.width/ 2));
+		yOff = Math.floor(ys * px + (screenctx.canvas.height/2));
                 
 		xOffTmp = xOff, yOffTmp = yOff, xTmp = x, yTmp = y;
 	}
@@ -33,44 +33,19 @@ function loop(){
 
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
 	screenctx.fillStyle = "#ffffff";
-	for(let i in q){
-		let xp = q[i][0], yp = q[i][1];
-		screenctx.fillRect(xp*px + xOff, yp*px + yOff, px, px);
+	
+	{ //cells
+		for(let i in q)
+			screenctx.fillRect(q[i][0]*px + xOff, q[i][1]*px + yOff, px, px);
 	}
 
-
-	if(grid)
+	screenctx.strokeStyle = "#222222";
+	screenctx.lineWidth=px/50;
+	if(grid) //grid
 		drawGrid();
 	
-	
-	screenctx.fillStyle = "#ffffff";
-	screenctx.strokeStyle = "#000000";
-	screenctx.lineWidth=1;
-	screenctx.font = "24px Courier New";
-
-	if(tps != 0) {
-		drawTextWithOutline("TPS: " + tps,screenctx.canvas.width - 192, 26, 128);
-		if(tpsAccurate / tps > 0.8)
-			screenctx.fillStyle = "#00ff00";
-		else if(tpsAccurate / tps > 0.4)
-			screenctx.fillStyle = "#ffff00";
-		else 
-			screenctx.fillStyle = "#ff0000";
-		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate * 10) / 10 + ")",screenctx.canvas.width - 256, 50, 192);
-	} else {
-		drawTextWithOutline("Unlimited",screenctx.canvas.width - 192, 26, 128);
-		if(tpsAccurate >= 300)
-			screenctx.fillStyle = "#00ff00";
-		else if(tpsAccurate >= 50) 
-			screenctx.fillStyle = "#ffff00";
-		else 
-			screenctx.fillStyle = "#ff0000";
-		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate * 10) / 10 + ")",screenctx.canvas.width - 256, 50, 192);
-	}
-
-	screenctx.fillStyle = "#ffffff";
-
-	if(!pause)
+	screenctx.lineWidth=2;
+	if(!pause) //pause state symbol
 		fillTriangle(screenctx.canvas.width - 64, 10, screenctx.canvas.width-64, 74, screenctx.canvas.width-8, 42);
 	else {
 		screenctx.beginPath();
@@ -80,21 +55,21 @@ function loop(){
 		screenctx.stroke();
 	}
 
-	if(pause && !lastpausestate)
-		clearInterval(updateInterval);
-	else if(!pause && lastpausestate)
-		updateInterval = setInterval(update,1000/tps);
-	lastpausestate=pause;
-
+	{ //TPS text
+		screenctx.strokeStyle = "#000000";
+		screenctx.lineWidth=1;
+		screenctx.font = "24px Courier New";
+		drawTextWithOutline((tps ? "TPS: " + tps : "Unlimited"),screenctx.canvas.width - 192, 26, 128);
+		screenctx.fillStyle = `hwb(${Math.floor(lerp(0, 120, clamp(tpsAccurate / (tps ? tps : 300) , 0, 1)))} 0% 0%)`
+		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate * 10) / 10 + ")",screenctx.canvas.width - 256, 50, 192);
+	}
 
 	{ //cursor
 		screenctx.fillStyle = "#999999";
         	screenctx.fillRect(Math.floor((x - xOff)/px)*px + xOff, Math.floor((y - yOff)/px)*px + yOff,px,px);
-		
 		screenctx.beginPath();
 		screenctx.fillStyle = "#000000";
 		screenctx.strokeStyle = "#ffffff";
-		screenctx.lineWidth=2;
 		screenctx.arc(x, y, 6, 0, 2 * Math.PI);
 		screenctx.fill();
 		screenctx.stroke();

@@ -283,16 +283,25 @@ function forget(){
 	}
 }
 
+
+
+//=====================================================================================================================//
+
+
+
 let qt = etree(16);
 let hw = 1 << qt.depth;
 let step = 0;
 let tpsAccurate = 0;
+let pause = true;
+let updateInterval;
+let tps = 10;
 
 function setCell(x, y, v){
 	qt = qt.set(x + hw, y + hw, v);
 }
 
-function update(tps){
+function update(){
 	if(tps == 0){
 		if(step != (qt.depth - 2)){
 			step = qt.depth - 2;
@@ -329,7 +338,25 @@ let getTps = function(){
 	postMessage(tpsAccurate);
 }
 
-let events = {setCell, getCells, getTps, update};
+let setPause = function(v){
+	if(v && !pause)
+		clearInterval(updateInterval);
+	else if(!v && pause)
+		updateInterval = setInterval(update, 1000/tps);
+
+	pause = v;
+}
+
+let setTps = function(v){
+	tps += v;
+	tps = tps < 0 ? 0 : tps;
+	if(!pause){
+		clearInterval(updateInterval);
+		updateInterval = setInterval(update, 1000/tps);
+	}
+}
+
+let events = {setCell, getCells, getTps, update, setPause, setTps};
 onmessage = (e) => {
 	let ev = e.data;
 	if(events[ev[0]])
