@@ -1,8 +1,8 @@
 function draw(){
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
-	screenctx.fillStyle = "#ffffff";
 	
 	{ //cells
+		screenctx.fillStyle = "#ffffff";
 		for(let i in alive)
 			screenctx.fillRect(Number(alive[i][0]*BigInt(px) + xOff), Number(alive[i][1]*BigInt(px) + yOff), px, px);
 	}
