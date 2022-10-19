@@ -181,6 +181,8 @@ function overlap(x, y, w, h, x1, y1, w1, h1){
 
 }
 
+//TODO
+//map function that returns weather a given tree has cells or not
 _qtree.map = function(x, y, w, h, func){
 	let m = 1n << BigInt(this.depth);
 	let nd = [this.nw(), this.ne(), this.sw(), this.se()];
@@ -191,16 +193,6 @@ _qtree.map = function(x, y, w, h, func){
 			else
 				nd[i].map(x - m*BigInt(i&1), y - m*(BigInt(i&2) >> 1n), w, h, func);
 		}
-}
-
-let msb = function(n){
-	let k = 1n;
-	while(n >> k){
-		n |= (n >> k)
-		k *= 2n;
-	}
-
-	return (k+1n) >> 1n;
 }
 
 _qtree.set = function(x, y, v){
