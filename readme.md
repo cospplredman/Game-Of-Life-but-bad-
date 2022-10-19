@@ -7,3 +7,4 @@ Controls:
   - Left Click - Spawn alive cell
   - Right Click - Kill alive cell
   - Space - Toggle pause
+  - G - toggle grid
