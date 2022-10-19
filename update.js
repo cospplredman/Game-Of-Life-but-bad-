@@ -34,10 +34,10 @@ let setPause = function(v){
 
 let getInfo = async function(){
 	alive = await getCells(
-		-Math.floor(xOff/px),
-		-Math.floor(yOff/px),
-		Math.floor(screenctx.canvas.width/px + 1),
-		Math.floor(screenctx.canvas.height/px + 1)
+		-xOff/BigInt(px),
+		-yOff/BigInt(px),
+		BigInt(Math.floor(screenctx.canvas.width/px + 1)),
+		BigInt(Math.floor(screenctx.canvas.height/px + 1))
 	);
 
 	tpsAccurate = await getTps();

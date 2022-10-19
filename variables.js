@@ -6,7 +6,7 @@ screenctx.canvas.width = window.innerWidth;
 screenctx.canvas.height = window.innerHeight;
 
 // Grid
-let xOff = 0, yOff = 0,
+let xOff = 0n, yOff = 0n,
     px = 20,
     x = 0, y = 0,
     grid = true, zoom = 1;

@@ -182,19 +182,29 @@ function overlap(x, y, w, h, x1, y1, w1, h1){
 }
 
 _qtree.map = function(x, y, w, h, func){
-	let m = 1 << this.depth;
+	let m = 1n << BigInt(this.depth);
 	let nd = [this.nw(), this.ne(), this.sw(), this.se()];
 	for(let i = 0; i != 4; i++)
-		if(overlap(m*(i&1), m*((i&2) >> 1), m, m, x, y, w, h)){
+		if(overlap(m*BigInt(i&1), m*(BigInt(i&2) >> 1n), m, m, x, y, w, h)){
 			if(this.depth == 0)
-				func(-(x - m*(i&1)), -(y - m*((i&2) >> 1)), nd[i]);
+				func(-(x - m*BigInt(i&1)), -(y - m*(BigInt(i&2) >> 1n)), nd[i]);
 			else
-				nd[i].map(x - m*(i&1), y - m*((i&2) >> 1), w, h, func);
+				nd[i].map(x - m*BigInt(i&1), y - m*(BigInt(i&2) >> 1n), w, h, func);
 		}
 }
 
+let msb = function(n){
+	let k = 1n;
+	while(n >> k){
+		n |= (n >> k)
+		k *= 2n;
+	}
+
+	return (k+1n) >> 1n;
+}
+
 _qtree.set = function(x, y, v){
-	let w = 1 << this.depth;
+	let w = 1n << BigInt(this.depth);
 	let i = (x >= w) + 2*(y >= w);
 	let nd = [this.nw(), this.ne(), this.sw(), this.se()];
 
@@ -204,6 +214,7 @@ _qtree.set = function(x, y, v){
 		nd[i] = nd[i].set(x % w, y % w, v);
 	return qtree(nd[0], nd[1], nd[2], nd[3]);
 }
+
 
 let memo = Object.create(null);
 _qtree.memoize = function(){
@@ -235,17 +246,8 @@ _qtree.remember = function(){
 
 Object.freeze(_qtree);
 var qtree = (nw, ne, sw, se) => {
-	//if(nw.depth != ne.depth || nw.depth != sw.depth || nw.depth != se.depth) console.log("WARNING: wrong depths");
-	let tree = Object.create(_qtree); /*, {
-		_nw: {value: nw},
-		_ne: {value: ne},
-		_sw: {value: sw},
-		_se: {value: se},
-		depth: {value: (nw.depth ?? -1) + 1},
-		hash: {writable: true},
-		next: {writable: true}
-	});*/
-
+	let tree = Object.create(_qtree);
+	
 	tree._nw = nw;
 	tree._ne = ne;
 	tree._sw = sw;
@@ -273,13 +275,11 @@ function center(n){
 	return qtree(fd[0], fd[1], fd[2], fd[3]);
 }
 
-function forget(){
+function forget(step){
 	for(let i in memo){
 		for(let j in memo[i]){
-			//optimization idea:
-			//	check if the next item is useful in the next step sizej.
-			//
-			memo[i][j].next = undefined;
+			if(memo[i][j].depth > step)
+				memo[i][j].next = undefined;
 			delete memo[i][j];
 		}
 		delete memo[i];;
@@ -292,8 +292,8 @@ let step = 0;
 
 
 
-let qt = etree(30);
-let hw = 1 << qt.depth;
+let qt = etree(64);
+let hw = 1n << BigInt(qt.depth);
 let tpsAccurate = 0;
 let pause = true;
 let updateInterval;
@@ -304,27 +304,30 @@ function setCell(x, y, v){
 }
 
 function update(){
+	let st, ed;
 	if(tps == 0){
 		if(step != (qt.depth - 2)){
-			forget();
 			step = qt.depth - 2;
+			forget(0);
 			qt.remember();
 		}
-		let st = performance.now();
+
+		st = performance.now();
 		qt = center(qt.solve());
-		let ed = performance.now();
-		tpsAccurate = 1000 / (ed - st + 0.5) * (1 << (qt.depth - 2));
+		ed = performance.now();
 	}else{
 		if(step != 0){
-			forget();
 			step = 0;
+			forget(0);
 			qt.remember();
 		}
-		let st = performance.now();
+
+		st = performance.now();
 		qt = center(qt.solven(1));
-		let ed = performance.now();
-		tpsAccurate = 1000 / (ed - st + 0.5);
+		ed = performance.now();
+
 	}
+	tpsAccurate = BigInt(Math.round(1000 / (ed - st + 0.5))) * 1n << BigInt(step);
 
 
 	tpsAccurate = (tpsAccurate > tps && tps != 0 ? tps : tpsAccurate);

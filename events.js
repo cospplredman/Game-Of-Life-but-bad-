@@ -52,7 +52,7 @@ screen.addEventListener("mousedown", function(e) {
 });
 screen.addEventListener("mousemove",function(e) {
 	if(panmode)
-		xOff -= x - e.clientX, yOff -= y - e.clientY
+		xOff -= BigInt(x - e.clientX), yOff -= BigInt(y - e.clientY)
 
 	x = e.clientX, y = e.clientY;
 	attemptEditGrid();
@@ -75,12 +75,12 @@ screen.addEventListener("mouseup", function(e) {
   }
 });
 screen.addEventListener("wheel", function(e){ 
-	let xs = (xOff - x)/px, ys = (yOff - y)/px;
+	let xs = (xOff - BigInt(x))/BigInt(px), ys = (yOff - BigInt(y))/BigInt(px);
 
 	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
 	zoom = clamp(zoom, 0.03, 20);
 	
 	px = Math.ceil(20/zoom);
-	xOff = Math.ceil(xs * px) + x;
-	yOff = Math.ceil(ys * px) + y;
+	xOff = (xs * BigInt(px)) + BigInt(x);
+	yOff = (ys * BigInt(px)) + BigInt(y);
 });

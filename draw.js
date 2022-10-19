@@ -4,7 +4,7 @@ function draw(){
 	
 	{ //cells
 		for(let i in alive)
-			screenctx.fillRect(alive[i][0]*px + xOff, alive[i][1]*px + yOff, px, px);
+			screenctx.fillRect(Number(alive[i][0]*BigInt(px) + xOff), Number(alive[i][1]*BigInt(px) + yOff), px, px);
 	}
 
 	if(grid){ //grid
@@ -30,13 +30,17 @@ function draw(){
 		screenctx.lineWidth=1;
 		screenctx.font = "24px Courier New";
 		drawTextWithOutline((tps ? "TPS: " + tps : "Unlimited"),screenctx.canvas.width - 192, 26, 128);
-		screenctx.fillStyle = `hwb(${Math.floor(lerp(0, 120, clamp(tpsAccurate / (tps ? tps : 300) , 0, 1)))} 0% 0%)`
-		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate * 10) / 10 + ")",screenctx.canvas.width - 256, 50, 192);
+		screenctx.fillStyle = `hwb(${Math.floor(lerp(0, 120, clamp(Number(tpsAccurate) / (tps ? tps : 300), 0, 1)))} 0% 0%)`
+		drawTextWithOutline("(Actual: " + tpsAccurate + ")",screenctx.canvas.width - 256, 50, 192);
 	}
 
 	{ //cursor
 		screenctx.fillStyle = "#999999";
-        	screenctx.fillRect(Math.floor((x - xOff)/px)*px + xOff, Math.floor((y - yOff)/px)*px + yOff,px,px);
+        	screenctx.fillRect(
+			Number(((BigInt(x) - xOff)/BigInt(px))*BigInt(px) + xOff), 
+			Number(((BigInt(y) - yOff)/BigInt(px))*BigInt(px) + yOff),
+			px,px
+		);
 		screenctx.beginPath();
 		screenctx.fillStyle = "#000000";
 		screenctx.strokeStyle = "#ffffff";
