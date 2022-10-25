@@ -1,94 +1,57 @@
-#include<Array.h>
+#include"common.h"
 #define INIT_SIZE 1 << 15
 
 #ifndef HASH_TABLE_GUARD
 #define HASH_TABLE_GUARD
-template<class A, class B = void>
-struct hashTable{
-	size_t items = 0;
-
-	struct element{
-		A *a;
-		B *b;
-	};
-
-	Array<element> m_arr;
-
-	hashTable(){
-		m_arr.alloc(INIT_SIZE);
-		clear();
-	}
-
-	void clear(){
-		for(size_t i = 0; i != m_arr.length; i++)
-			m_arr[i] = {nullptr, nullptr};
-	}
-
-	void expand(){
-		element *q = m_arr.m_arr;
-		size_t len = m_arr.length;
-		m_arr.m_arr = new element[m_arr.length * 2];
-		m_arr.length *= 2;
-		clear();
-		for(size_t i = 0; i != len; i++){
-			if(q[i].a)
-				set(*(q[i].a), *(q[i].b));
-		}
-		delete q;
-	}
-
-	element &el(size_t a){
-		return m_arr[a % m_arr.length];
-	}
-
-	void set(A& b, B& c){
-		if((float)items / (float)m_arr.length > 0.7)
-			expand();
-
-		size_t a = +b;
-		size_t retry = 0;
-		while(1){
-			element *q = &el(a + retry);
-			if(q->a == nullptr){
-				*q = {&b, &c};
-				items++;
-				return;
-			}else if(*(q->a) == b){
-				*q = {&b, &c};
-				return;
-			}
-			retry++;
-		}
-	}
-
-	B* get(A& b){
-		size_t a = +b;
-		size_t retry = 0;
-		while(1){
-			element *q = &el(a + retry);
-			if(q->a == nullptr)
-				return nullptr;
-			if(*(q->a) == b)
-				return q->b;
-			retry++;
-		}
-	}
-
-
-};
-
-
+/*
+ * Open address hashing
+ * linear probing
+ * power of 2 size
+ *
+ * */
 template<class A>
-struct hashTable<A, void> : public Array<A> {
-	hashTable(){
-		this->alloc(INIT_SIZE);
-	}
+struct hashTable {
+	size_t l2sz;
+	A** m_key;
 
-	char has(size_t, A&);
-
-	void set(size_t, A&);
+	~hashTable();
+	hashTable();
+	A** getptr(A&);
+	void expand();	
 };
 
 template<class A>
-using Set = hashTable<A, void>;
+hashTable<A>::~hashTable(){
+	delete[] m_key;
+}
+
+template<class A>
+hashTable<A>::hashTable(){
+	l2sz = 1 << 24;
+	m_key = new A*[l2sz]{nullptr};
+}
+
+template<class A>
+A** hashTable<A>::getptr(A &b){
+	size_t a = +b;
+	size_t retry = 0;
+	A **q = &m_key[a & (l2sz - 1)];
+	while(*q != nullptr){
+		if(**q == b)
+			break;
+		q = &m_key[(a + ++retry) & (l2sz - 1)];
+	}
+	return q;	
+}
+
+template<class A>
+void hashTable<A>::expand(){
+	l2sz <<= 1;
+
+	A **key = m_key;
+	m_key = new A*[l2sz]{nullptr};
+
+	for(size_t i = 0; i != (l2sz >> 1); i++)
+		if(key[i]) set(key[i]);
+}
 #endif

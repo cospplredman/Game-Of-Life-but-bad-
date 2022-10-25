@@ -1,31 +1,45 @@
-#include<hashTable.h>
-
+#include"hashTable.h"
 struct qtree{
 	struct Node{
-		size_t hash;
 		union{
 			Node *nf[4];
 			Node *nd[2][2];
 		};
+		size_t hash;
+		Node* next;
 	
 		Node* nw();
-		Node* n();
+		Node* n(qtree&);
 		Node* ne();
-		Node* w();
-		Node* cc();
-		Node* e();
+		Node* w(qtree&);
+		Node* cc(qtree&);
+		Node* e(qtree&);
 		Node* sw();
-		Node* s();
+		Node* s(qtree&);
 		Node* se();
 
-		Node* solve1();
-		Node* solve();
-		Node* solven();
+		Node() = default;
+		Node(size_t);
+		Node(Node*, Node*, Node*, Node*);
+		Node* solve1(qtree&);
+		Node* solve(qtree&);
+		Node* solven(qtree&);
 		char operator==(Node&);
 		size_t operator+();
+		size_t hsh();
+		void print();
+		size_t get(size_t, size_t);
 	};
 
-	qtree &tree = *this;
+	size_t items;
+
+
 	hashTable<Node> memo;
-	Node* get(Node**);
+	Node *nodes;
+	Node *base[2];
+
+	qtree();
+	Node* get(Node A);
+	void expand();
+
 };
