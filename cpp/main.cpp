@@ -44,9 +44,9 @@ Node* etree(size_t d){
 Node* center(Node *a){
 	Node* e = etree(depth - 2);
 	return tr.get(Node(
-		tr.get(Node(e,e,e,a->nf[0])),			
-		tr.get(Node(e,e,a->nf[1],e)),			
-		tr.get(Node(e,a->nf[2],e,e)),			
+		tr.get(Node(e,e,e,a->nf[0])),
+		tr.get(Node(e,e,a->nf[1],e)),
+		tr.get(Node(e,a->nf[2],e,e)),
 		tr.get(Node(a->nf[3],e,e,e))
 	));
 }
@@ -54,6 +54,7 @@ Node* center(Node *a){
 
 EM_JS(void, setup, (), {
 	glob.ev = [];
+	glob.alive = [];
 	onmessage = async function(e) {
 		glob.ev.push(e.data);
 	};
@@ -65,6 +66,19 @@ EM_JS(size_t, getEvent, (), {
 	if(glob.c != undefined)
 		return glob.c[0];
 	return 0;
+});
+
+EM_JS(void, CP, (), {
+	glob.alive = [];		
+});
+
+EM_JS(void, PP, (size_t x, size_t y, size_t hsh), {
+	if(hsh)
+		glob.alive.push([BigInt(x + glob.c[1][0]), BigInt(y + glob.c[1][1])]);
+});
+
+EM_JS(void, PC, (), {
+	postMessage([3, glob.alive]);
 });
 
 EM_JS(size_t, numEvents, (), {
@@ -79,7 +93,12 @@ EM_JS(void, PR, (size_t e, size_t x, size_t y), {
 	postMessage([e, [x, y]]);	
 });
 
-enum{None, setCell, getCell, update, p};
+EM_JS(void, PI, (), {
+	console.log(glob);		
+});
+
+//==================================================
+enum{None, setCell, getCell, update, p, getCells};
 
 EM_BOOL evLoop(double time, void* userData){
 	size_t v = numEvents();
@@ -87,7 +106,6 @@ EM_BOOL evLoop(double time, void* userData){
 		size_t n = getEvent();
 		switch(n){
 			case setCell:
-				printf("setCell\n");
 				qt = set(qt, NP(0), NP(1), tr.base[NP(2)], depth - 1);
 			break;
 			case getCell:
@@ -96,10 +114,16 @@ EM_BOOL evLoop(double time, void* userData){
 			break;
 			case update:
 				qt = center(qt->solve(tr));
-				printf("done\n");
 			break;
 			case p:
 				ptree(qt, 5);
+				printf("items %zd\n", tr.items);
+				PI();
+			break;
+			case getCells:
+				CP();
+				qt->map(NP(0) + (1 << (depth - 1)), NP(1) + (1 << (depth - 1)), NP(2), NP(3), depth - 1, PP);
+				PC();
 			break;
 		}	
 	}

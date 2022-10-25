@@ -165,7 +165,6 @@ size_t Node::get(size_t x, size_t y, size_t d){
 	Node *c = this;
 	while(d--){
 		c = c->nf[(x >> 31) + ((y >> 30) & 2)];
-		//printf("%zd\n", (x >> 31) + ((y >> 31) & 2));
 		x <<= 1;
 		y <<= 1;
 	}
@@ -173,22 +172,23 @@ size_t Node::get(size_t x, size_t y, size_t d){
 	return c->hash;
 }
 
-size_t overlap(size_t x, size_t y, size_t w, size_t h, size_t x1, size_t y1, size_t w1, size_t h1){
-	if((x <= x1 && (x + w) >= x1) || (x1 <= x && (x1 + w1) >= x))
-		if((y <= y1 && (y + h) >= y1) || (y1 <= y && (y1 + h1) >= y))
+size_t overlap(int64_t x, int64_t y, int64_t w, int64_t h, int64_t x1, int64_t y1, int64_t w1, int64_t h1){
+	if((x <= x1 && (x + w) > x1) || (x1 <= x && (x1 + w1) > x))
+		if((y <= y1 && (y + h) > y1) || (y1 <= y && (y1 + h1) > y))
 			return 1;
 	return 0;
 }
 
-void Node::map(size_t x, size_t y, size_t w, size_t h, size_t d, void (*f)(size_t, size_t, size_t)){
+void Node::map(int64_t x, int64_t y, int64_t w, int64_t h, int64_t d, void (*f)(size_t, size_t, size_t)){
 	size_t m = 1 << d;
-	for(size_t i = 0; i != 4; i++)
+	for(size_t i = 0; i != 4; i++){
 		if(overlap(m*(i&1), m*((i&2) >> 1), m, m, x, y, w, h)){
-			if(d == 0)
-				f(-(x - m*(i&1)), -(y - m*((i&2) >> 1)), nf[i]->hash);
-			else
+			if(d == 0){
+				f(m*(i&1) - x, m*((i&2) >> 1) - y, nf[i]->hash);
+			}else
 				nf[i]->map(x - m*(i&1), y - m*((i&2) >> 1), w, h, d-1, f);
 		}
+	}
 	
 }
 

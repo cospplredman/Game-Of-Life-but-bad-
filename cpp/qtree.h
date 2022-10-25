@@ -29,7 +29,7 @@ struct qtree{
 		size_t hsh();
 		void print();
 		size_t get(size_t, size_t, size_t);
-		void map(size_t, size_t, size_t, size_t, size_t, void (*)(size_t, size_t, size_t));
+		void map(int64_t, int64_t, int64_t, int64_t, int64_t, void (*)(size_t, size_t, size_t));
 	};
 
 	size_t items;
