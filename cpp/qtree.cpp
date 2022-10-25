@@ -80,19 +80,30 @@ Node* Node::solve1(qtree& tree){
 		{sw()->sw()->hash, sw()->se()->hash, se()->sw()->hash, se()->se()->hash}
 	};
 
+	//for(size_t i = 0; i != 4; i++, printf("ll%zd\n", i))
+	//	for(size_t j = 0; j != 4; j++)
+	//		printf("%zd ", a[i][j]);
+
 	char b[2][2];
 
 	for(size_t i = 0; i != 2; i++)
-		for(size_t j = 0; j != 2; j++)
+		for(size_t j = 0; j != 2; j++){
 			b[i][j] = 	a[i][j] + a[i+1][j] + a[i+2][j] +
 					a[i][j+1] + a[i+1][j+1] + a[i+2][j+1] +
 					a[i][j+2] + a[i+1][j+2] + a[i+2][j+2];
+			b[i][j] = rule[a[i + 1][j + 1]][b[i][j] - a[i+1][j+1]];
+		}
+	
+	//for(size_t i = 0; i != 2; i++, printf("ll%zd\n", i))
+	//	for(size_t j = 0; j != 2; j++)
+	//	printf("%zd ", b[i][j]);
+	
 
 	return next = tree.get(Node(
-		tree.base[rule[a[1][1]][b[0][0] - a[1][1]]],
-		tree.base[rule[a[2][1]][b[1][0] - a[2][1]]],
-		tree.base[rule[a[1][2]][b[0][1] - a[1][2]]],
-		tree.base[rule[a[2][2]][b[1][1] - a[2][2]]]
+		tree.base[b[0][0]],
+		tree.base[b[0][1]],
+		tree.base[b[1][0]],
+		tree.base[b[1][1]]
 	));
 
 }
@@ -101,7 +112,6 @@ Node* Node::solve(qtree& tree){
 	if(next)
 		return next;
 
-	print();
 	if(nw()->nw()->nw() == nullptr)
 		return solve1(tree);
 	
@@ -118,10 +128,10 @@ Node* Node::solve(qtree& tree){
 	};
 
 	return next = tree.get(Node(
-		Node(mp[0],mp[1],mp[3],mp[4]).solve(tree),
-		Node(mp[1],mp[2],mp[4],mp[5]).solve(tree),
-		Node(mp[3],mp[4],mp[6],mp[7]).solve(tree),
-		Node(mp[4],mp[5],mp[7],mp[8]).solve(tree)	
+		tree.get(Node(mp[0],mp[1],mp[3],mp[4]))->solve(tree),
+		tree.get(Node(mp[1],mp[2],mp[4],mp[5]))->solve(tree),
+		tree.get(Node(mp[3],mp[4],mp[6],mp[7]))->solve(tree),
+		tree.get(Node(mp[4],mp[5],mp[7],mp[8]))->solve(tree)	
 	));
 }
 
@@ -145,18 +155,41 @@ size_t Node::operator+(){
 }
 
 void Node::print(){
-	printf("Node(%ld, %ld, %ld, %ld)\n", nf[0], nf[1], nf[2], nf[3]);
+	printf("Node(%p, %p, %p, %p)\n", nf[0], nf[1], nf[2], nf[3]);
 }
 
-size_t Node::get(size_t x, size_t y){
+size_t Node::get(size_t x, size_t y, size_t d){
+	x <<= (32 - d);
+	y <<= (32 - d);
+
 	Node *c = this;
-	while(c->nf[0]){
-		c = c->nf[(x >> 63) + ((y >> 62) & 2)];
+	while(d--){
+		c = c->nf[(x >> 31) + ((y >> 30) & 2)];
+		//printf("%zd\n", (x >> 31) + ((y >> 31) & 2));
 		x <<= 1;
 		y <<= 1;
 	}
 
 	return c->hash;
+}
+
+size_t overlap(size_t x, size_t y, size_t w, size_t h, size_t x1, size_t y1, size_t w1, size_t h1){
+	if((x <= x1 && (x + w) >= x1) || (x1 <= x && (x1 + w1) >= x))
+		if((y <= y1 && (y + h) >= y1) || (y1 <= y && (y1 + h1) >= y))
+			return 1;
+	return 0;
+}
+
+void Node::map(size_t x, size_t y, size_t w, size_t h, size_t d, void (*f)(size_t, size_t, size_t)){
+	size_t m = 1 << d;
+	for(size_t i = 0; i != 4; i++)
+		if(overlap(m*(i&1), m*((i&2) >> 1), m, m, x, y, w, h)){
+			if(d == 0)
+				f(-(x - m*(i&1)), -(y - m*((i&2) >> 1)), nf[i]->hash);
+			else
+				nf[i]->map(x - m*(i&1), y - m*((i&2) >> 1), w, h, d-1, f);
+		}
+	
 }
 
 qtree::qtree(){

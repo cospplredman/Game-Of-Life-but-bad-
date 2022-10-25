@@ -33,6 +33,10 @@ function lerp(start, end, t) {
 	return (1-t)*start+t*end;
 }
 
+function sign(v){
+	return v < 0 ? -1 : 0;
+}
+
 function clamp(val, min, max) {
 	return (val <= max ? (val >= min ? val : min) : max);
 }

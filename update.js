@@ -13,12 +13,12 @@ let getInfo = () => {
 		switch(n[0]){
 			case 2:
 				console.log("getCell response", n);
-				alive.push([BigInt(n[1][0]), BigInt(n[1][1])]);
+				alive.push([BigInt(n[1][0] - (1 << 30)), BigInt(n[1][1] - (1 << 30))]);
 			break;
 		}
 	}
 
-	/*
+/*	
 	getCells(
 		-Number(xOff)/Math.floor(px),
 		-Number(yOff)/Math.floor(px),
@@ -32,7 +32,7 @@ let getCells = async function(x, y, w, h){
 	alive = []
 	for(let i = x; i < w; i++)
 		for(let j = y; j < h; j++)
-			updater.postMessage([2, [i, j]]);
+			updater.postMessage([2, [i + (1 << 30), j + (1 << 30), 31]]);
 
 	//for(let i in alive)
 	//	alive[i] = [alive[i][0]+x, alive[i][1]+y];
@@ -43,7 +43,8 @@ let getTps = async function(){
 }
 
 let setCell = function(x, y, v){
-	updater.postMessage([1,[Number(x), Number(y), Number(v)]]);
+	console.log(x, y, v);
+	updater.postMessage([1,[Number(x) + (1 << 30), Number(y) + (1 << 30), Number(v)]]);
 }
 
 let setTps = function(newTPS) {

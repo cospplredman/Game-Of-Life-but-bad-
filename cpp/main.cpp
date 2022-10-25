@@ -14,9 +14,9 @@ Node *qt = nullptr;
 size_t depth = 0;
 
 void ptree(Node* a, size_t d){
-	for(size_t i = 0; i != (1 << d); i++, printf("\n"))
+	for(size_t i = 0; i != (1 << d); i++, printf("ad %zd\n", i))
 		for(size_t j = 0; j != (1 << d); j++)
-			printf("%d ", a->get(j << (64 - d), i << (64 - d)));
+			printf("%zd ", a->get(j, i, d));
 }
 
 Node *set(Node *a, size_t x, size_t y, Node *v, size_t d){
@@ -28,6 +28,8 @@ Node *set(Node *a, size_t x, size_t y, Node *v, size_t d){
 		r.nf[i] = v;
 	else
 		r.nf[i] = set(r.nf[i], x & (w - 1), y & (w - 1), v, d-1);
+				
+	r.hash = r.hsh();
 	return tr.get(r); 
 }
 
@@ -37,6 +39,16 @@ Node* etree(size_t d){
 
 	Node* q = etree(d-1);
 	return tr.get(Node(q,q,q,q));
+}
+
+Node* center(Node *a){
+	Node* e = etree(depth - 2);
+	return tr.get(Node(
+		tr.get(Node(e,e,e,a->nf[0])),			
+		tr.get(Node(e,e,a->nf[1],e)),			
+		tr.get(Node(e,a->nf[2],e,e)),			
+		tr.get(Node(a->nf[3],e,e,e))
+	));
 }
 //=================================================================
 
@@ -67,7 +79,7 @@ EM_JS(void, PR, (size_t e, size_t x, size_t y), {
 	postMessage([e, [x, y]]);	
 });
 
-enum{None, setCell, getCell};
+enum{None, setCell, getCell, update, p};
 
 EM_BOOL evLoop(double time, void* userData){
 	size_t v = numEvents();
@@ -76,12 +88,18 @@ EM_BOOL evLoop(double time, void* userData){
 		switch(n){
 			case setCell:
 				printf("setCell\n");
-				qt = set(qt, NP(0), NP(1), tr.base[NP(2)], depth);
+				qt = set(qt, NP(0), NP(1), tr.base[NP(2)], depth - 1);
 			break;
 			case getCell:
-				printf("getCell\n");
-				if(qt->get(NP(0), NP(1)));
-				PR(2, NP(0), NP(1));
+				if(qt->get(NP(0), NP(1), NP(2)))
+					PR(2, NP(0), NP(1));
+			break;
+			case update:
+				qt = center(qt->solve(tr));
+				printf("done\n");
+			break;
+			case p:
+				ptree(qt, 5);
 			break;
 		}	
 	}
@@ -89,8 +107,8 @@ EM_BOOL evLoop(double time, void* userData){
 }
 
 int main(){
-	qt = etree(32);
-	depth = 32;
+	qt = etree(31);
+	depth = 31;
 	setup();
 
 	//god this is awful XD
