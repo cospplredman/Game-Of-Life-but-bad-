@@ -147,7 +147,14 @@ char Node::operator==(Node &b){
 }
 
 size_t Node::hsh(){
-	return 1*nf[0]->hash + 11*nf[1]->hash + 101*nf[2]->hash + 1007*nf[3]->hash;
+	//if the tree has live cells in it the 0'th bit should be set
+	// this hash function was a joke but its actually good x3
+	size_t q = (nf[0]->hash | nf[1]->hash | nf[2]->hash | nf[3]->hash);
+	size_t e[] = {(size_t)nf[0], (size_t)nf[1], (size_t)nf[2], (size_t)nf[3]};
+	size_t f = 2*e[0] ^ 3*e[1] ^ 5*e[2] ^ 7*e[3];
+	size_t g = 11*nf[0]->hash + 13*nf[1]->hash + 17*nf[2]->hash + 19*nf[3]->hash;
+
+	return ((g + f) & ~1) | (q & 1);
 }
 
 size_t Node::operator+(){
