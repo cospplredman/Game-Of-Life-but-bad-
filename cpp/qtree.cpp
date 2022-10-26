@@ -135,8 +135,35 @@ Node* Node::solve(qtree& tree){
 	));
 }
 
-Node* Node::solven(qtree&){
-	return this;
+Node* Node::solven(qtree& tree, size_t d, size_t md){
+	if(d < md)
+		return solve(tree);
+
+	if(next)
+		return next;
+
+	if(nw()->nw()->nw() == nullptr)
+		return solve1(tree);
+	
+	Node *mp[] = {
+		nw()->cc(tree),
+		n(tree)->cc(tree),
+		ne()->cc(tree),
+		w(tree)->cc(tree),
+		cc(tree)->cc(tree),
+		e(tree)->cc(tree),
+		sw()->cc(tree),
+		s(tree)->cc(tree),
+		se()->cc(tree)
+	};
+
+	return next = tree.get(Node(
+		tree.get(Node(mp[0],mp[1],mp[3],mp[4]))->solven(tree, d-1, md),
+		tree.get(Node(mp[1],mp[2],mp[4],mp[5]))->solven(tree, d-1, md),
+		tree.get(Node(mp[3],mp[4],mp[6],mp[7]))->solven(tree, d-1, md),
+		tree.get(Node(mp[4],mp[5],mp[7],mp[8]))->solven(tree, d-1, md)
+		
+	));
 }
 
 char Node::operator==(Node &b){
@@ -191,7 +218,7 @@ void Node::map(int64_t x, int64_t y, int64_t w, int64_t h, int64_t d, void (*f)(
 	for(size_t i = 0; i != 4; i++){
 		if(overlap(m*(i&1), m*((i&2) >> 1), m, m, x, y, w, h)){
 			if(d == 0){
-				f(m*(i&1) - x, m*((i&2) >> 1) - y, nf[i]->hash);
+				f(m*(i&1) - x, m*((i&2) >> 1) - y, nf[i]->hash & 1);
 			}else
 				nf[i]->map(x - m*(i&1), y - m*((i&2) >> 1), w, h, d-1, f);
 		}

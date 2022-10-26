@@ -1,5 +1,6 @@
 #include"stdio.h"
 #include"qtree.h"
+#include<chrono>
 
 #ifdef WASM
 #include"emscripten/emscripten.h"
@@ -50,6 +51,34 @@ Node* center(Node *a){
 		tr.get(Node(a->nf[3],e,e,e))
 	));
 }
+
+size_t sum(Node *a){
+	size_t c = 0;
+	for(size_t i = 0; i != 4; i++)
+		c += a->nf[i]->hash & 1;
+
+	return c;
+}
+
+size_t outer(Node *b){
+	size_t c = 0;
+	for(size_t i = 0; i != 4; i++)
+		c += sum(b->nf[i]) - (b->nf[i]->nf[3-i]->hash & 1);
+
+	return c;
+}
+
+Node *adapt(Node* b){
+	ptree(b, 2);
+	printf("out %zd, sum %zd\n", outer(b), sum(b));
+	if(outer(b)){
+		b = center(b);
+		depth++;
+		return center(b);
+	}
+	return center(b);
+}
+
 //=================================================================
 
 EM_JS(void, setup, (), {
@@ -95,19 +124,16 @@ EM_JS(void, PR, (size_t e, size_t x, size_t y), {
 });
 
 EM_JS(void, SV, (), {
-	glob.v = glob.c[1];
-});
-
-EM_JS(size_t, GV, (size_t a), {
-	return glob.v[a];
+	glob.v = glob.c[1];		
 });
 
 //==================================================
-enum{None, setCell, getCell, update, p, getCells, getView};
+enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps};
+size_t x, y, w, h, pause = 1, tps = 10;
 
 void sendCells(){
 	CP();
-	qt->map(GV(0) + (1 << (depth - 1)), GV(1) + (1 << (depth - 1)), GV(2), GV(3), depth - 1, PP);
+	qt->map(x + (1 << (30)), y + (1 << (30)), w, h, 30, PP);
 	PC();
 }
 
@@ -126,13 +152,11 @@ EM_BOOL evLoop(double time, void* userData){
 				uv = 1;
 			break;
 			case update:
-				qt = center(qt->solve(tr));
-				uv = 1;
-
+				//no longer;	
 			break;
 			case p:
 				ptree(qt, 5);
-				printf("items %zd\n", tr.items);
+				printf("items %zd, depth %zd\n", tr.items, depth);
 				for(size_t i = 0; i != tr.memo.l2sz; i++){
 					if(tr.memo.m_key[i]){
 						cu++;
@@ -148,11 +172,33 @@ EM_BOOL evLoop(double time, void* userData){
 				printf("biggest cluster %zd \n", mx);
 			break;
 			case getView:
+				x = NP(0), y = NP(1), w = NP(2), h = NP(3);
 				SV();
 				uv = 1;
 			break;
+			case getPause:
+				pause = NP(0);
+			break;
+			case getTps:
+				tps = NP(0);
+			break;
 		}	
 	}
+
+	if(!pause){
+		auto start = std::chrono::high_resolution_clock::now();
+		//for when i get around to abitrarily sized maps
+		//qt = adapt(qt->solve(tr));
+		qt = center(qt->solven(tr, depth, 1));
+		//qt = center(qt->solve(tr));
+		uv = 1;
+		auto end = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+	}
+
+	//note will break things
+	if((float)tr.items/(float)tr.memo.l2sz > 0.75)
+		tr.expand();
 
 	if(uv)
 		sendCells();

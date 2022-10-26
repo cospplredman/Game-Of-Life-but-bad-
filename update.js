@@ -70,5 +70,5 @@ let setTps = function(newTPS) {
 }
 
 let setPause = function(v){
-	//updater.postMessage(["setPause", [v]]);
+	updater.postMessage([7, [+v]]);
 }

@@ -23,7 +23,7 @@ struct qtree{
 		Node(Node*, Node*, Node*, Node*);
 		Node* solve1(qtree&);
 		Node* solve(qtree&);
-		Node* solven(qtree&);
+		Node* solven(qtree&, size_t, size_t);
 		char operator==(Node&);
 		size_t operator+();
 		size_t hsh();
