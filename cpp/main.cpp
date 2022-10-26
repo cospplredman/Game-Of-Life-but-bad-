@@ -16,7 +16,7 @@ size_t depth = 0;
 void ptree(Node* a, size_t d){
 	for(size_t i = 0; i != (1 << d); i++, printf("ad %zd\n", i))
 		for(size_t j = 0; j != (1 << d); j++)
-			printf("%zd ", a->get(j, i, d));
+			printf("%zd ", a->get(j, i, d) & 1);
 }
 
 Node *set(Node *a, size_t x, size_t y, Node *v, size_t d){
@@ -58,6 +58,7 @@ EM_JS(void, setup, (), {
 	onmessage = async function(e) {
 		glob.ev.push(e.data);
 	};
+	postMessage([4,[]]);
 });
 
 EM_JS(size_t, getEvent, (), {
@@ -74,7 +75,7 @@ EM_JS(void, CP, (), {
 
 EM_JS(void, PP, (size_t x, size_t y, size_t hsh), {
 	if(hsh)
-		glob.alive.push([BigInt(x + glob.c[1][0]), BigInt(y + glob.c[1][1])]);
+		glob.alive.push([BigInt(x + glob.v[0]), BigInt(y + glob.v[1])]);
 });
 
 EM_JS(void, PC, (), {
@@ -93,40 +94,68 @@ EM_JS(void, PR, (size_t e, size_t x, size_t y), {
 	postMessage([e, [x, y]]);	
 });
 
-EM_JS(void, PI, (), {
-	console.log(glob);		
+EM_JS(void, SV, (), {
+	glob.v = glob.c[1];
+});
+
+EM_JS(size_t, GV, (size_t a), {
+	return glob.v[a];
 });
 
 //==================================================
-enum{None, setCell, getCell, update, p, getCells};
+enum{None, setCell, getCell, update, p, getCells, getView};
+
+void sendCells(){
+	CP();
+	qt->map(GV(0) + (1 << (depth - 1)), GV(1) + (1 << (depth - 1)), GV(2), GV(3), depth - 1, PP);
+	PC();
+}
 
 EM_BOOL evLoop(double time, void* userData){
+	size_t uv = 0;
+
+	size_t mx = 0;
+	size_t cu = 0;
+
 	size_t v = numEvents();
 	for(size_t i = 0; i != v; i++){
 		size_t n = getEvent();
 		switch(n){
 			case setCell:
 				qt = set(qt, NP(0), NP(1), tr.base[NP(2)], depth - 1);
-			break;
-			case getCell:
-				if(qt->get(NP(0), NP(1), NP(2)))
-					PR(2, NP(0), NP(1));
+				uv = 1;
 			break;
 			case update:
 				qt = center(qt->solve(tr));
+				uv = 1;
+
 			break;
 			case p:
 				ptree(qt, 5);
 				printf("items %zd\n", tr.items);
-				PI();
+				for(size_t i = 0; i != tr.memo.l2sz; i++){
+					if(tr.memo.m_key[i]){
+						cu++;
+						printf("#");
+					}else{
+						if(cu > mx)
+							mx = cu;
+						cu = 0;
+						printf("_");
+					}
+				}
+				printf("\n");
+				printf("biggest cluster %zd \n", mx);
 			break;
-			case getCells:
-				CP();
-				qt->map(NP(0) + (1 << (depth - 1)), NP(1) + (1 << (depth - 1)), NP(2), NP(3), depth - 1, PP);
-				PC();
+			case getView:
+				SV();
+				uv = 1;
 			break;
 		}	
 	}
+
+	if(uv)
+		sendCells();
 	return EM_TRUE;
 }
 

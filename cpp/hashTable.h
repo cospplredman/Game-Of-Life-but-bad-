@@ -41,7 +41,7 @@ A** hashTable<A>::getptr(A &b){
 			break;
 		q = &m_key[(a + ++retry) & (l2sz - 1)];
 	}
-	return q;	
+	return q;
 }
 
 template<class A>
