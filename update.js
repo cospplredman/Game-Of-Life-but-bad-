@@ -13,13 +13,13 @@ let getInfo = () => {
 	let v = glob.ev.length;
 
 	let t = [
-		-Math.floor(Number(xOff)/Math.floor(px)),
-		-Math.floor(Number(yOff)/Math.floor(px)),
+		-Math.floor(xOff/px),
+		-Math.floor(yOff/px),
 		Math.floor(screenctx.canvas.width/px + 1),
-		Math.floor(screenctx.canvas.height/px + 1)
+		Math.floor(screenctx.canvas.height/px + 1),
+		vd
 	];
 
-	
 	for(let i = 0; i != 4; i++)
 		if(t[i] != glob.v[i]){
 			sendv(t);
@@ -33,6 +33,10 @@ let getInfo = () => {
 		switch(n[0]){
 			case 3:
 				alive = n[1];
+				zp = px, vp = vd;
+				cellPath = new Path2D();
+				for(let i in alive)
+					cellPath.rect(alive[i][0]*px, alive[i][1]*px, px, px);
 			break;
 			case 4:
 				sendv(glob.v);
@@ -61,7 +65,7 @@ let getTps = function(){
 }
 
 let setCell = function(x, y, v){
-	updater.postMessage([1,[Number(x) + (1 << 30), Number(y) + (1 << 30), Number(v)]]);
+	updater.postMessage([1,[x, y, v]]);
 	q = true;
 }
 

@@ -104,7 +104,7 @@ EM_JS(void, CP, (), {
 
 EM_JS(void, PP, (size_t x, size_t y, size_t hsh), {
 	if(hsh)
-		glob.alive.push([BigInt(x + glob.v[0]), BigInt(y + glob.v[1])]);
+		glob.alive.push([(x + glob.v[0]) , (y + glob.v[1])]);
 });
 
 EM_JS(void, PC, (), {
@@ -129,11 +129,12 @@ EM_JS(void, SV, (), {
 
 //==================================================
 enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps};
-size_t x, y, w, h, pause = 1, tps = 10;
+size_t x, y, w, h, pause = 1, tps = 10, vd=0;
 
 void sendCells(){
 	CP();
-	qt->map(x + (1 << (30)), y + (1 << (30)), w, h, 30, PP);
+	size_t qd = depth - vd - 1;
+	qt->map(x + (1 << (qd)), y + (1 << (qd)), w, h, qd, PP);
 	PC();
 }
 
@@ -148,7 +149,7 @@ EM_BOOL evLoop(double time, void* userData){
 		size_t n = getEvent();
 		switch(n){
 			case setCell:
-				qt = set(qt, NP(0), NP(1), tr.base[NP(2)], depth - 1);
+				qt = set(qt, (uint64_t)(NP(0) + (1 << 30)) << vd, (uint64_t)(NP(1) + (1 << 30)) << vd, tr.base[NP(2)], depth - 1);
 				uv = 1;
 			break;
 			case update:
@@ -172,7 +173,7 @@ EM_BOOL evLoop(double time, void* userData){
 				printf("biggest cluster %zd \n", mx);
 			break;
 			case getView:
-				x = NP(0), y = NP(1), w = NP(2), h = NP(3);
+				x = NP(0), y = NP(1), w = NP(2), h = NP(3), vd = NP(4);
 				SV();
 				uv = 1;
 			break;
@@ -189,8 +190,8 @@ EM_BOOL evLoop(double time, void* userData){
 		auto start = std::chrono::high_resolution_clock::now();
 		//for when i get around to abitrarily sized maps
 		//qt = adapt(qt->solve(tr));
-		qt = center(qt->solven(tr, depth, 1));
-		//qt = center(qt->solve(tr));
+		//qt = center(qt->solven(tr, depth, 1));
+		qt = center(qt->solve(tr));
 		uv = 1;
 		auto end = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
