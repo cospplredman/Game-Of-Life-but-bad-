@@ -24,6 +24,7 @@ struct qtree{
 		Node* solve1(qtree&);
 		Node* solve(qtree&);
 		Node* solven(qtree&, size_t, size_t);
+		operator bool();
 		char operator==(Node&);
 		size_t operator+();
 		size_t hsh();
@@ -33,10 +34,7 @@ struct qtree{
 	};
 
 	size_t items;
-
-
 	hashTable<Node> memo;
-	Node *nodes;
 	Node *base[2];
 
 	qtree();

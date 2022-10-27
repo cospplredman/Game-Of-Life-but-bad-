@@ -55,8 +55,10 @@ Node* Node::se(){
 }
 
 Node::Node(size_t a){
-	for(size_t i = 0; i != 4; i++)
+	for(size_t i = 0; i != 3; i++)
 		nf[i] = nullptr;
+
+	nf[3] = (Node*)0x1;
 	hash = a;
 	next = nullptr;
 }
@@ -166,6 +168,10 @@ Node* Node::solven(qtree& tree, size_t d, size_t md){
 	));
 }
 
+Node::operator bool(){
+	return !!nf[3];
+}
+
 char Node::operator==(Node &b){
 	for(char i = 0; i != 4; i++)
 		if(nf[i] != b.nf[i])
@@ -228,38 +234,19 @@ void Node::map(int64_t x, int64_t y, int64_t w, int64_t h, int64_t d, void (*f)(
 
 qtree::qtree(){
 	items = 0;
-	nodes = new Node[memo.l2sz];
 	base[0] = get(Node(size_t(0)));
 	base[1] = get(Node(size_t(1)));
 }
 
 Node* qtree::get(Node a){
-	Node** q = memo.getptr(a);
+	Node* q = memo.getptr(a);
 	if(*q)
-		return *q;
-	
-	*q = &nodes[items];
-	**q = a;
+		return q;
+	*q = a;
 	items++;
-	return *q;
+	return q;
 }
 
 void qtree::expand(){
-	Node *val = nodes;
-	Node **key = memo.m_key;
-	memo.l2sz <<= 1;
-
-	nodes = new Node[memo.l2sz];
-	memo.m_key = new Node*[memo.l2sz]{nullptr};
-
-	size_t it = items;
-	items = 0;
-	for(size_t i = 0; i < it; i++)
-		get(val[i]);
-
-	base[0] = get(Node(size_t(0)));
-	base[1] = get(Node(size_t(1)));
-	
-	delete[] val;
-	delete[] key;
+	//todo
 }

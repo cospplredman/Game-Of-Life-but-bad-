@@ -19,7 +19,7 @@ function fillTriangle(x1, y1, x2, y2, x3, y3) {
 
 function drawGrid(){
 	screenctx.beginPath();
-	let xa = Number(xOff%BigInt(px)), ya = Number(yOff%BigInt(px));
+	let xa = xOff%px, ya = yOff%px;
 	for(let dimPos = 0; dimPos < screenctx.canvas.width + px; dimPos+=px)
 		drawLine(dimPos+xa,0,dimPos+xa,screenctx.canvas.height);
 	
@@ -43,7 +43,7 @@ function clamp(val, min, max) {
 
 function place(arr){
 	for(let i = 0; i < arr.length; i++)
-		setCell(BigInt(arr[i][0]), BigInt(arr[i][1]), 1);
+		setCell(arr[i][0], arr[i][1], 1);
 }
 
 function PT(str){
@@ -54,7 +54,7 @@ function PT(str){
 			continue;
 		for(let j = 0; j != a[i].length; j++)
 			if(a[i][j] == "O")
-				r.push([BigInt(j), BigInt(k)]);
+				r.push([j, k]);
 		k++;
 	}
 	return r;
@@ -67,7 +67,7 @@ function RLE(str){
 
 function attemptEditGrid() {
 	if(draggingmouse && mbutton!=-1 && mbutton!=1) {
-		let xTmp = (BigInt(x) - xOff)/BigInt(px), yTmp = (BigInt(y) - yOff)/BigInt(px);
+		let xTmp = (x - xOff)/px, yTmp = (y - yOff)/px;
 		switch(mbutton){
 			case 2:
 				setCell(xTmp, yTmp, 0);

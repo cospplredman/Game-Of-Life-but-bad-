@@ -1,6 +1,4 @@
 #include"common.h"
-#define INIT_SIZE 1 << 15
-
 #ifndef HASH_TABLE_GUARD
 #define HASH_TABLE_GUARD
 /*
@@ -12,11 +10,11 @@
 template<class A>
 struct hashTable {
 	size_t l2sz;
-	A** m_key;
+	A* m_key;
 
 	~hashTable();
 	hashTable();
-	A** getptr(A&);
+	A* getptr(A&);
 	void expand();	
 };
 
@@ -27,17 +25,17 @@ hashTable<A>::~hashTable(){
 
 template<class A>
 hashTable<A>::hashTable(){
-	l2sz = 1 << 24;
-	m_key = new A*[l2sz]{nullptr};
+	l2sz = 1 << 26;
+	m_key = new A[l2sz]{};
 }
 
 template<class A>
-A** hashTable<A>::getptr(A &b){
+A* hashTable<A>::getptr(A &b){
 	size_t a = +b;
 	size_t retry = 0;
-	A **q = &m_key[a & (l2sz - 1)];
-	while(*q != nullptr){
-		if(**q == b)
+	A *q = &m_key[a & (l2sz - 1)];
+	while(*q){
+		if(*q == b)
 			break;
 		q = &m_key[(a + ++retry) & (l2sz - 1)];
 	}
@@ -48,10 +46,10 @@ template<class A>
 void hashTable<A>::expand(){
 	l2sz <<= 1;
 
-	A **key = m_key;
-	m_key = new A*[l2sz]{nullptr};
+	A *key = m_key;
+	m_key = new A[l2sz]{nullptr};
 
 	for(size_t i = 0; i != (l2sz >> 1); i++)
-		if(key[i]) set(key[i]);
+		if(!!key[i]) set(key[i]);
 }
 #endif
