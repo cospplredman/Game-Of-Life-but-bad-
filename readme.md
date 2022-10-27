@@ -1,4 +1,4 @@
-Conway's Game of Life in HTML5  
+Conway's Game of Life in the browser 
 Play here: https://cospplredman.github.io/Game-Of-Life-but-bad-/  
 Controls:
   - Up/Down arrow keys - Change ticks per second
