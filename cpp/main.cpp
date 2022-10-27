@@ -127,9 +127,13 @@ EM_JS(void, SV, (), {
 	glob.v = glob.c[1];		
 });
 
+EM_JS(void, SAT, (double q), {
+	postMessage([5, [q]]);		
+});
+
 //==================================================
 enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps};
-size_t x, y, w, h, pause = 1, tps = 10, vd=0;
+size_t x, y, w, h, pause = 1, tps = 10, vd=0, sd=1;
 std::chrono::high_resolution_clock::time_point frameStart;
 
 void sendCells(){
@@ -140,6 +144,10 @@ void sendCells(){
 }
 
 EM_BOOL evLoop(double time, void* userData){
+	auto frameEnd = std::chrono::high_resolution_clock::now();
+	auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+
+
 	size_t uv = 0;
 
 	size_t mx = 0;
@@ -162,12 +170,10 @@ EM_BOOL evLoop(double time, void* userData){
 				for(size_t i = 0; i != tr.memo.l2sz; i++){
 					if(tr.memo.m_key[i]){
 						cu++;
-						printf("#");
 					}else{
 						if(cu > mx)
 							mx = cu;
 						cu = 0;
-						printf("_");
 					}
 				}
 				printf("\n");
@@ -186,16 +192,30 @@ EM_BOOL evLoop(double time, void* userData){
 			break;
 		}	
 	}
-	auto frameEnd = std::chrono::high_resolution_clock::now();
-	auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
 
-	if(!pause && (tps == 0 || (float)tps > 1.0/std::chrono::duration<float>(frameTime).count())){
-		frameStart = std::chrono::high_resolution_clock::now();
-		//for when i get around to abitrarily sized maps
-		//qt = adapt(qt->solve(tr));
-		qt = center(qt->solven(tr, depth, 1));
-		//qt = center(qt->solve(tr));
-		uv = 1;
+	if(!pause){
+		if((float)tps > 1.0/std::chrono::duration<float>(frameTime).count()){
+			if(sd != 1){
+				sd = 1;
+				tr.forgetNext();
+			}
+			SAT(1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1)));
+			frameStart = std::chrono::high_resolution_clock::now();
+			//for when i get around to abitrarily sized maps
+			//qt = adapt(qt->solve(tr));
+			qt = center(qt->solven(tr, depth, sd));
+			//qt = center(qt->solve(tr));
+			uv = 1;
+		}else if(tps == 0){
+			if(sd != depth){
+				sd = depth;
+				tr.forgetNext();
+			}
+			SAT(1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1)));
+			frameStart = std::chrono::high_resolution_clock::now();
+			qt = center(qt->solve(tr));
+			uv = 1;
+		}
 	}
 
 	if(uv)

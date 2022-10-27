@@ -36,8 +36,8 @@ function draw(){
 		screenctx.lineWidth=1;
 		screenctx.font = "24px Courier New";
 		drawTextWithOutline((tps ? "TPS: " + tps : "Unlimited"),screenctx.canvas.width - 192, 26, 128);
-		screenctx.fillStyle = `hwb(${Math.floor(lerp(0, 120, clamp(tpsAccurate / (tps ? tps : 300), 0, 1)))} 0% 0%)`
-		drawTextWithOutline("(Actual: " + tpsAccurate + ")",screenctx.canvas.width - 256, 50, 192);
+		screenctx.fillStyle = `hwb(${Math.floor(lerp(0, 120, clamp(tpsAccurate / (tps ? tps : 100), 0, 1)))} 0% 0%)`
+		drawTextWithOutline("(Actual: " + Math.floor(tpsAccurate*10)/10 + ")",screenctx.canvas.width - 256, 50, 192);
 	}
 
 	{ //cursor

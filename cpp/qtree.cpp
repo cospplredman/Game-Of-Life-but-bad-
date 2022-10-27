@@ -82,10 +82,6 @@ Node* Node::solve1(qtree& tree){
 		{sw()->sw()->hash, sw()->se()->hash, se()->sw()->hash, se()->se()->hash}
 	};
 
-	//for(size_t i = 0; i != 4; i++, printf("ll%zd\n", i))
-	//	for(size_t j = 0; j != 4; j++)
-	//		printf("%zd ", a[i][j]);
-
 	char b[2][2];
 
 	for(size_t i = 0; i != 2; i++)
@@ -96,11 +92,6 @@ Node* Node::solve1(qtree& tree){
 			b[i][j] = rule[a[i + 1][j + 1]][b[i][j] - a[i+1][j+1]];
 		}
 	
-	//for(size_t i = 0; i != 2; i++, printf("ll%zd\n", i))
-	//	for(size_t j = 0; j != 2; j++)
-	//	printf("%zd ", b[i][j]);
-	
-
 	return next = tree.get(Node(
 		tree.base[b[0][0]],
 		tree.base[b[0][1]],
@@ -247,6 +238,7 @@ Node* qtree::get(Node a){
 	return q;
 }
 
-void qtree::expand(){
-	//todo
+void qtree::forgetNext(){
+	for(size_t i = 0; i != memo.l2sz; i++)
+		memo.m_key[i].next = nullptr;
 }

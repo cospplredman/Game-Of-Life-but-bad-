@@ -41,6 +41,9 @@ let getInfo = () => {
 			case 4:
 				sendv(glob.v);
 			break;
+			case 5:
+				tpsAccurate = n[1][0];
+			break;
 		}
 	}
 

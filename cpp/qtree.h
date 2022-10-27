@@ -39,6 +39,5 @@ struct qtree{
 
 	qtree();
 	Node* get(Node A);
-	void expand();
-
+	void forgetNext();
 };
