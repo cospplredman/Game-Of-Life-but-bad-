@@ -99,7 +99,7 @@ EM_JS(size_t, getEvent, (), {
 });
 
 EM_JS(void, CP, (), {
-	glob.alive = [];		
+	glob.alive = [];
 });
 
 EM_JS(void, PP, (size_t x, size_t y, size_t hsh), {
@@ -112,7 +112,7 @@ EM_JS(void, PC, (), {
 });
 
 EM_JS(size_t, numEvents, (), {
-	return glob.ev.length;		
+	return glob.ev.length;	
 });
 
 EM_JS(size_t, NP, (size_t a), {
@@ -120,15 +120,15 @@ EM_JS(size_t, NP, (size_t a), {
 });
 
 EM_JS(void, PR, (size_t e, size_t x, size_t y), {
-	postMessage([e, [x, y]]);	
+	postMessage([e, [x, y]]);
 });
 
 EM_JS(void, SV, (), {
-	glob.v = glob.c[1];		
+	glob.v = glob.c[1];
 });
 
 EM_JS(void, SAT, (double q), {
-	postMessage([5, [q]]);		
+	postMessage([5, [q]]);	
 });
 
 //==================================================
@@ -141,6 +141,13 @@ void sendCells(){
 	size_t qd = depth - vd - 1;
 	qt->map(x + (1 << (qd)), y + (1 << (qd)), w, h, qd, PP);
 	PC();
+}
+
+void setSd(size_t a){
+	if(sd != a){
+		tr.forgetNext();
+		sd = a;	
+	}
 }
 
 EM_BOOL evLoop(double time, void* userData){
@@ -160,9 +167,6 @@ EM_BOOL evLoop(double time, void* userData){
 			case setCell:
 				qt = set(qt, (uint64_t)(NP(0) + (1 << 30)) << vd, (uint64_t)(NP(1) + (1 << 30)) << vd, tr.base[NP(2)], depth - 1);
 				uv = 1;
-			break;
-			case update:
-				//no longer;	
 			break;
 			case p:
 				ptree(qt, 5);
@@ -195,23 +199,18 @@ EM_BOOL evLoop(double time, void* userData){
 
 	if(!pause){
 		if((float)tps > 1.0/std::chrono::duration<float>(frameTime).count()){
-			if(sd != 1){
-				sd = 1;
-				tr.forgetNext();
-			}
-			SAT(1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1)));
+			setSd(1);
+			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
+			SAT(atps);
 			frameStart = std::chrono::high_resolution_clock::now();
 			//for when i get around to abitrarily sized maps
-			//qt = adapt(qt->solve(tr));
+			//qt = adapt(qt->solven(tr, depth, sd));
 			qt = center(qt->solven(tr, depth, sd));
-			//qt = center(qt->solve(tr));
 			uv = 1;
 		}else if(tps == 0){
-			if(sd != depth){
-				sd = depth;
-				tr.forgetNext();
-			}
-			SAT(1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1)));
+			setSd(depth);
+			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
+			SAT(atps);
 			frameStart = std::chrono::high_resolution_clock::now();
 			qt = center(qt->solve(tr));
 			uv = 1;
