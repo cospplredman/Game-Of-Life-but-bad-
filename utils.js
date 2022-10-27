@@ -62,7 +62,39 @@ function PT(str){
 }
 
 function RLE(str){
-	//TODO
+	//TODO: make this less cancer
+	let a = str.split("\n");
+	let r = [];
+	let n = 0;
+	for(let i = 0, k = 0, d = 0; i != a.length; i++){
+		if(a[i][0] == "#")
+			continue;
+
+		if(a[i].match(/x = [0-9]+, y = [0-9]+/))
+			continue;
+
+		console.log(a[i]);
+		for(let j = 0; j != a[i].length; j++){
+			if("0123456789".indexOf(a[i][j]) != -1){
+				n = n*10 + Number(a[i][j]);
+			}else if(a[i][j] == "b"){
+				if(n == 0)
+					n = 1;
+				d += n;
+				n = 0;
+			}else if(a[i][j] == "o"){
+				if(n == 0)
+					n = 1;
+				for(let q = 0; q < n; q++)
+					r.push([d++,k]);
+				n = 0;
+			}else if(a[i][j] == "$"){
+				d = 0;
+				k++
+			}
+		}
+	}
+	return r;
 }
 
 function attemptEditGrid() {
