@@ -96,7 +96,7 @@ screen.addEventListener("wheel", function(e){
 		xOff -= (xOff - x)/d;
 		yOff -= (yOff - y)/d;
 		vd = td;
-		scrollSpeed = 0.15 + vd;
+		scrollSpeed = 0.15 + vd*vd;
 		return;
 	}
 	

@@ -69,8 +69,8 @@ let setCell = function(x, y, v){
 	q = true;
 }
 
-let setTps = function(newTPS) {
-	//updater.postMessage(["setTps", [newTPS]]);
+let setTps = function() {
+	updater.postMessage([8, [tps]]);
 }
 
 let setPause = function(v){

@@ -130,6 +130,7 @@ EM_JS(void, SV, (), {
 //==================================================
 enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps};
 size_t x, y, w, h, pause = 1, tps = 10, vd=0;
+std::chrono::high_resolution_clock::time_point frameStart;
 
 void sendCells(){
 	CP();
@@ -185,24 +186,21 @@ EM_BOOL evLoop(double time, void* userData){
 			break;
 		}	
 	}
+	auto frameEnd = std::chrono::high_resolution_clock::now();
+	auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
 
-	if(!pause){
-		auto start = std::chrono::high_resolution_clock::now();
+	if(!pause && (tps == 0 || (float)tps > 1.0/std::chrono::duration<float>(frameTime).count())){
+		frameStart = std::chrono::high_resolution_clock::now();
 		//for when i get around to abitrarily sized maps
 		//qt = adapt(qt->solve(tr));
-		//qt = center(qt->solven(tr, depth, 1));
-		qt = center(qt->solve(tr));
+		qt = center(qt->solven(tr, depth, 1));
+		//qt = center(qt->solve(tr));
 		uv = 1;
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 	}
-
-	//note will break things
-	if((float)tr.items/(float)tr.memo.l2sz > 0.75)
-		tr.expand();
 
 	if(uv)
 		sendCells();
+
 	return EM_TRUE;
 }
 
