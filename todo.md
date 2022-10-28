@@ -3,12 +3,12 @@ TODO:
 - Abitrarily sized playfields.
 	- the main problem with this right now is actually addressing individual cells. 
 	- I will need to impliment a bigInt of somesort, and find a way to pass them between wasm an js.
-- ~~better zoom functionality.
+- ~~better zoom functionality.~~
 	- Im thinking infinite zoom out, or atleast enough to see the entire play field. 
 	- at high enough zoom i would like to approximate where the live cells are with one of the properties of the hash function i decided on.
-	- ^ basically LOD~~
-- ~~Automatically decide how many generations to calculate at a time when using limmited tps.
-	- re-impliment update loop first~~
+	- ^ basically LOD
+- ~~Automatically decide how many generations to calculate at a time when using limmited tps.~~
+	- re-impliment update loop first
 - Copy paste, and the ability to load gol files.
 	- impliment control system for it.
 - add way to change rule dynamically.
