@@ -1,14 +1,10 @@
-let updater = new Worker("cpp/build/main.js");
-let glob = {ev:[], v:[]};
-
-updater.onready = (e) => {
-	getInfo();
-}
-
 updater.onmessage = (e) => {
 	glob.ev.push(e.data);
 }
 
+/*
+ * Worker Communication loop
+ * */
 let getInfo = () => {
 	let v = glob.ev.length;
 
@@ -22,7 +18,7 @@ let getInfo = () => {
 
 	for(let i = 0; i != 4; i++)
 		if(t[i] != glob.v[i]){
-			sendv(t);
+			updater.postMessage([6, t]);
 			break;
 		}
 
@@ -32,15 +28,15 @@ let getInfo = () => {
 		let n = glob.ev.pop();
 		switch(n[0]){
 			case 3:
-				alive = n[1][0];
-				zp = px;
-				vp = n[1][1][4];
+				zp = px, vp = n[1][1][4];
 				cellPath = new Path2D();
+				
+				alive = n[1][0];
 				for(let i = 0; i != alive.length; i++)
 					cellPath.rect(alive[i][0]*px, alive[i][1]*px, px, px);
 			break;
 			case 4:
-				sendv(glob.v);
+				updater.postMessage([6, t]);
 			break;
 			case 5:
 				tpsAccurate = n[1][0];
@@ -51,32 +47,23 @@ let getInfo = () => {
 	requestAnimationFrame(getInfo);
 }
 
-let sendv = function(v){
-	updater.postMessage([6, v]);
-}
-
-let getCells = function(x, y, w, h){
-	updater.postMessage([5,[x, y, w, h]]);
-}
-
-let update = function(){
-	updater.postMessage([3,[]]);
-}
-
-let getTps = function(){
-	//TODO
-	return 0;
-}
-
+/*
+ * Sets the cell at (x, y) to the state v
+ * */
 let setCell = function(x, y, v){
 	updater.postMessage([1,[x, y, v]]);
-	q = true;
 }
 
-let setTps = function() {
+/*
+ * Sets the tps limit to tps
+ * */
+let setTps = function(tps) {
 	updater.postMessage([8, [tps]]);
 }
 
+/*
+ * Sets the pause state to the state v
+ * */
 let setPause = function(v){
 	updater.postMessage([7, [+v]]);
 }

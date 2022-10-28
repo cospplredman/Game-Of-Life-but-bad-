@@ -1,13 +1,8 @@
 #include"stdio.h"
 #include"qtree.h"
 #include<chrono>
-
-#ifdef WASM
 #include"emscripten/emscripten.h"
 #include"emscripten/html5.h"
-#else
-#define EMSCRIPTEN_KEEPALIVE
-#endif
 
 using Node = qtree::Node;
 qtree tr = {};

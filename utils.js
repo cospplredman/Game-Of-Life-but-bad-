@@ -3,10 +3,6 @@ function drawLine(x1, y1, x2, y2) {
 	screenctx.lineTo(x2, y2);
 }
 
-function drawTextWithOutline(txt, x, y, maxWidth) {
-	screenctx.fillText(txt,x, y, maxWidth);
-}
-
 function fillTriangle(x1, y1, x2, y2, x3, y3) {
 	screenctx.beginPath();
 	screenctx.moveTo(x1, y1);
@@ -33,19 +29,23 @@ function lerp(start, end, t) {
 	return (1-t)*start+t*end;
 }
 
-function sign(v){
-	return v < 0 ? -1 : 0;
-}
-
 function clamp(val, min, max) {
 	return (val <= max ? (val >= min ? val : min) : max);
 }
 
+/*
+ * Places a GOL pattern that you pass it.
+ * 	pattern is stored as an array of x y pairs.
+ * */
 function place(arr){
 	for(let i = 0; i < arr.length; i++)
 		setCell(arr[i][0], arr[i][1], 1);
 }
 
+/*
+ * Parses a plain text GOL file and returns a GOL pattern
+ * https://conwaylife.com/wiki/Plaintext
+ * */
 function PT(str){
 	let a = str.split("\n");
 	let r = [];
@@ -61,6 +61,10 @@ function PT(str){
 
 }
 
+/*
+ * Parses a run length encoded GOL file and returns a GOL pattern
+ * https://conwaylife.com/wiki/Run_Length_Encoded
+ * */
 function RLE(str){
 	//TODO: make this less cancer
 	let a = str.split("\n");

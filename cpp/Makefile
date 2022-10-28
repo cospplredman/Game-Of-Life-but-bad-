@@ -1,6 +1,7 @@
-WCC = emcc
-#WASMFLAGS = -sASSERTIONS -sALLOW_MEMORY_GROWTH -O3 -sEXPORTED_RUNTIME_METHODS=ccall,cwrap -sEXPORTED_FUNCTIONS=_main
-WASMFLAGS = -sALLOW_MEMORY_GROWTH -O3 -sEXPORTED_RUNTIME_METHODS=ccall,cwrap -sEXPORTED_FUNCTIONS=_main
+#Building requires the emscripten compiler and associated headers
+
+CXX = emcc
+WASMFLAGS = -sALLOW_MEMORY_GROWTH -O3 -sEXPORTED_FUNCTIONS=_main
 
 INC = ./
 
@@ -8,7 +9,7 @@ build:
 	mkdir $@
 
 build/main.js: main.cpp build
-	$(WCC) $(WASMFLAGS) -o $@ *.cpp -I$(INC) -DWASM; echo ";let glob = {};" >> build/main.js
+	$(CXX) $(WASMFLAGS) -o $@ *.cpp -I$(INC); echo ";let glob = {};" >> build/main.js
 
 run: build/main.o
 	$<
