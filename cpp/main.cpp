@@ -234,7 +234,6 @@ EM_BOOL evLoop(double time, void* userData){
 	if(uv)
 		sendCells();
 
-	//printf("%f fill%%\n", (float)tr.items / (float)tr.memo.l2sz);
 	if((float)tr.items / (float)tr.memo.l2sz > 0.6)
 		tr.prune(qt, depth);
 
