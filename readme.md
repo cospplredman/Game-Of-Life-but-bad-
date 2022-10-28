@@ -1,10 +1,14 @@
-Conway's Game of Life in the browser 
-Play here: https://cospplredman.github.io/Game-Of-Life-but-bad-/  
+#Conway's Game of Life in the browser 
+----
+Play [here](https://cospplredman.github.io/Game-Of-Life-but-bad-/).
+  
 Controls:
-  - Up/Down arrow keys - Change ticks per second
-  - Middle Mouse Button - Pan camera
-  - Mouse Wheel - Zoom camera
-  - Left Click - Spawn alive cell
-  - Right Click - Kill alive cell
+  - Up/Down arrow keys - Change tick limit
+  - Middle Mouse Button - Pan
+  - Mouse Wheel - Zoom
+  - Left Click - Spawn cell
+  - Right Click - Kill cell
   - Space - Toggle pause
-  - G - toggle grid
+  - G - Toggle grid
+
+This is an implimentation of Bill Gosper's Hash Life that runs in the browser.
