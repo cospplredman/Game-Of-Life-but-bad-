@@ -40,4 +40,5 @@ struct qtree{
 	qtree();
 	Node* get(Node A);
 	void forgetNext();
+	void prune(Node*,size_t);
 };

@@ -82,7 +82,7 @@ screen.addEventListener("wheel", function(e){
 		zoom = 0.03;
 
 	px = 20/zoom;
-	td = -Math.floor(Math.log2(px));
+	td = -Math.floor(Math.log2(px/4));
 
 	if(td < 0)
 		td = 0;
@@ -96,7 +96,6 @@ screen.addEventListener("wheel", function(e){
 		xOff -= (xOff - x)/d;
 		yOff -= (yOff - y)/d;
 		vd = td;
-		scrollSpeed = 0.15 + vd*vd;
 		return;
 	}
 	

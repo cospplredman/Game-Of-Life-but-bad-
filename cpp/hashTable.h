@@ -47,7 +47,7 @@ void hashTable<A>::expand(){
 	l2sz <<= 1;
 
 	A *key = m_key;
-	m_key = new A[l2sz]{nullptr};
+	m_key = new A[l2sz]{};
 
 	for(size_t i = 0; i != (l2sz >> 1); i++)
 		if(!!key[i]) set(key[i]);

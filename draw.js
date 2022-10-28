@@ -4,8 +4,7 @@ function draw(){
 	{ //cells
 		screenctx.fillStyle = "#ffffff";
 		let scr = new Path2D();
-		let sc = vd - vp;
-		sc = (px/(2**sc))/zp;
+		let sc = (px/zp)*2**(vp-vd);
 		scr.addPath(cellPath, new DOMMatrix()
 			.translate(xOff, yOff)
 			.scale(sc, sc)

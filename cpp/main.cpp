@@ -84,6 +84,7 @@ Node *adapt(Node* b){
 EM_JS(void, setup, (), {
 	glob.ev = [];
 	glob.alive = [];
+	glob.v = [0,0,0,0,0];
 	onmessage = async function(e) {
 		glob.ev.push(e.data);
 	};
@@ -108,7 +109,7 @@ EM_JS(void, PP, (size_t x, size_t y, size_t hsh), {
 });
 
 EM_JS(void, PC, (), {
-	postMessage([3, glob.alive]);
+	postMessage([3, [glob.alive, glob.v]]);
 });
 
 EM_JS(size_t, numEvents, (), {
@@ -170,7 +171,7 @@ EM_BOOL evLoop(double time, void* userData){
 			break;
 			case p:
 				ptree(qt, 5);
-				printf("items %zd, depth %zd\n", tr.items, depth);
+				printf("tableSize %zd, items %zd, depth %zd\n", tr.memo.l2sz, tr.items, depth);
 				for(size_t i = 0; i != tr.memo.l2sz; i++){
 					if(tr.memo.m_key[i]){
 						cu++;
@@ -219,6 +220,10 @@ EM_BOOL evLoop(double time, void* userData){
 
 	if(uv)
 		sendCells();
+
+	//printf("%f fill%%\n", (float)tr.items / (float)tr.memo.l2sz);
+	if((float)tr.items / (float)tr.memo.l2sz > 0.6)
+		tr.prune(qt, depth);
 
 	return EM_TRUE;
 }

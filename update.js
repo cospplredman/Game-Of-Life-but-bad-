@@ -32,10 +32,11 @@ let getInfo = () => {
 		let n = glob.ev.pop();
 		switch(n[0]){
 			case 3:
-				alive = n[1];
-				zp = px, vp = vd;
+				alive = n[1][0];
+				zp = px;
+				vp = n[1][1][4];
 				cellPath = new Path2D();
-				for(let i in alive)
+				for(let i = 0; i != alive.length; i++)
 					cellPath.rect(alive[i][0]*px, alive[i][1]*px, px, px);
 			break;
 			case 4:

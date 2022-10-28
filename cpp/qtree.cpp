@@ -193,7 +193,7 @@ size_t Node::operator+(){
 }
 
 void Node::print(){
-	printf("Node(%p, %p, %p, %p)\n", nf[0], nf[1], nf[2], nf[3]);
+	printf("%p = Node(%p, %p, %p, %p) -> %p\n", this, nf[0], nf[1], nf[2], nf[3], next);
 }
 
 size_t Node::get(size_t x, size_t y, size_t d){
@@ -237,6 +237,9 @@ qtree::qtree(){
 }
 
 Node* qtree::get(Node a){
+	if(memo.l2sz <= items)
+		throw;
+
 	Node* q = memo.getptr(a);
 	if(*q)
 		return q;
@@ -248,4 +251,30 @@ Node* qtree::get(Node a){
 void qtree::forgetNext(){
 	for(size_t i = 0; i != memo.l2sz; i++)
 		memo.m_key[i].next = nullptr;
+}
+
+void flag(Node* a){
+	if(a->next)
+		return;
+	a->next = (Node*)0x1;
+	for(size_t i = 0; i != 4; i++)
+		flag(a->nf[i]);
+}
+
+void qtree::prune(Node*a, size_t d){
+	printf("pruneing tree\n");
+
+	forgetNext();
+	base[0]->next = base[1]->next = (Node*)0x1;
+	flag(a);	
+	Node def{};
+	for(size_t i = 0; i != memo.l2sz; i++)
+		if(memo.m_key[i]){
+			if(memo.m_key[i].next)
+				memo.m_key[i].next = nullptr;
+			else{
+				memo.m_key[i] = def;
+				items--;
+			}
+		}
 }
