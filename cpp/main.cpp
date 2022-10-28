@@ -165,10 +165,6 @@ size_t l2(size_t a){
 }
 
 EM_BOOL evLoop(double time, void* userData){
-	auto frameEnd = std::chrono::high_resolution_clock::now();
-	auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
-	double ft = std::chrono::duration<float>(frameTime).count();
-
 
 	size_t uv = 0;
 
@@ -211,26 +207,32 @@ EM_BOOL evLoop(double time, void* userData){
 			break;
 		}	
 	}
-
+	
 	if(!pause){
+		auto frameEnd = std::chrono::high_resolution_clock::now();
+		auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+		double ft = std::chrono::duration<float>(frameTime).count();
+
 		if((float)tps > 1.0/std::chrono::duration<float>(frameTime).count()){
+			frameStart = std::chrono::high_resolution_clock::now();
 			setSd(l2((double)tps / (1.0/aft)));
 			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
 			SAT(atps);
-			frameStart = std::chrono::high_resolution_clock::now();
 			//for when i get around to abitrarily sized maps
 			//qt = adapt(qt->solven(tr, depth, sd));
 			qt = center(qt->solven(tr, depth-2, sd));
 			uv = 1;
 		}else if(tps == 0){
+			frameStart = std::chrono::high_resolution_clock::now();
 			setSd(depth-2);
 			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
 			SAT(atps);
-			frameStart = std::chrono::high_resolution_clock::now();
 			qt = center(qt->solve(tr));
 			uv = 1;
 		}
 		aft = (99.0*aft + ft)/100.0;
+	}else{
+			frameStart = std::chrono::high_resolution_clock::now();
 	}
 
 	if(uv)
