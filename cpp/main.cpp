@@ -214,6 +214,7 @@ EM_BOOL evLoop(double time, void* userData){
 		double ft = std::chrono::duration<float>(frameTime).count();
 
 		if((float)tps > 1.0/std::chrono::duration<float>(frameTime).count()){
+			aft = (99.0*aft + ft)/100.0;
 			frameStart = std::chrono::high_resolution_clock::now();
 			setSd(l2((double)tps / (1.0/aft)));
 			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
@@ -223,6 +224,7 @@ EM_BOOL evLoop(double time, void* userData){
 			qt = center(qt->solven(tr, depth-2, sd));
 			uv = 1;
 		}else if(tps == 0){
+			aft = (99.0*aft + ft)/100.0;
 			frameStart = std::chrono::high_resolution_clock::now();
 			setSd(depth-2);
 			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
@@ -230,7 +232,6 @@ EM_BOOL evLoop(double time, void* userData){
 			qt = center(qt->solve(tr));
 			uv = 1;
 		}
-		aft = (99.0*aft + ft)/100.0;
 	}else{
 			frameStart = std::chrono::high_resolution_clock::now();
 	}
