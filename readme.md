@@ -1,4 +1,4 @@
-#Conway's Game of Life in the browser 
+# Conway's Game of Life in the browser
 ----
 Play [here](https://cospplredman.github.io/Game-Of-Life-but-bad-/).
   
