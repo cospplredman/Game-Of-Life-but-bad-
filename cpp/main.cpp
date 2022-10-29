@@ -78,8 +78,7 @@ Node *adapt(Node* b){
 
 EM_JS(void, setup, (), {
 	glob.ev = [];
-	glob.alive = [];
-	glob.v = [0,0,0,0,0];
+	glob.v = [0,0,0,0,0,0];
 	onmessage = async function(e) {
 		glob.ev.push(e.data);
 	};
@@ -95,16 +94,22 @@ EM_JS(size_t, getEvent, (), {
 });
 
 EM_JS(void, CP, (), {
-	glob.alive = [];
+	glob.pd = new Uint8ClampedArray(glob.v[2]*glob.v[3]*4);
 });
 
 EM_JS(void, PP, (size_t x, size_t y, size_t hsh), {
-	if(hsh)
-		glob.alive.push([(x + glob.v[0]) , (y + glob.v[1])]);
+	let i = (x + y*glob.v[2])*4;
+	if(hsh){
+		glob.pd[i] = glob.pd[i+1] = glob.pd[i+2] = 255;
+		glob.pd[i+3] = 255;
+	}
 });
 
 EM_JS(void, PC, (), {
-	postMessage([3, [glob.alive, glob.v]]);
+	createImageBitmap(new ImageData(glob.pd, glob.v[2], glob.v[3]))
+	.then((img)=>{
+		postMessage([3, [glob.v, img]], [img]);
+	});
 });
 
 EM_JS(size_t, numEvents, (), {
@@ -120,7 +125,12 @@ EM_JS(void, PR, (size_t e, size_t x, size_t y), {
 });
 
 EM_JS(void, SV, (), {
-	glob.v = glob.c[1];
+	if(glob.c[1][5] > glob.v[5])
+		glob.v = glob.c[1];
+});
+
+EM_JS(size_t ,GV, (size_t i), {
+	return glob.v[i];		
 });
 
 EM_JS(void, SAT, (double q), {
@@ -190,8 +200,8 @@ EM_BOOL evLoop(double time, void* userData){
 				printf("biggest cluster %zd \n", mx);
 			break;
 			case getView:
-				x = NP(0), y = NP(1), w = NP(2), h = NP(3), vd = NP(4);
 				SV();
+				x = GV(0), y = GV(1), w = GV(2), h = GV(3), vd = GV(4);
 				uv = 1;
 			break;
 			case getPause:
