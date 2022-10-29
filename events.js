@@ -87,7 +87,7 @@ screen.addEventListener("wheel", function(e){
 		zoom = 0.03;
 
 	px = 20/zoom;
-	td = -Math.floor(Math.log2(px/4));
+	td = -Math.floor(Math.log2(px*2));
 
 	if(td < 0)
 		td = 0;
