@@ -1,16 +1,14 @@
 function draw(){
 	screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
-	
-	{ //cells
-		screenctx.fillStyle = "#ffffff";
-		let scr = new Path2D();
-		let sc = (px/zp)*2**(vp-vd);
-		scr.addPath(cellPath, new DOMMatrix()
-			.translate(xOff, yOff)
-			.scale(sc, sc)
-		);
-		screenctx.fill(scr);
-	}
+
+	let sc = px*2**(vp[4]-vd);
+	screenctx.translate(xOff + vp[0]*sc, yOff + vp[1]*sc);
+	screenctx.scale(sc, sc);
+	screenctx.imageSmoothingEnabled = false;
+	if(ibm)
+		screenctx.drawImage(ibm, 0, 0, ibm.width, ibm.height);
+	screenctx.setTransform(1, 0, 0, 1, 0 ,0);
+	screenctx.fillStyle = "#ffffff";
 
 	if(grid){ //grid
 		screenctx.strokeStyle = "#222222";

@@ -6,7 +6,6 @@ screenctx.canvas.height = window.innerHeight;
 
 //draw path
 let zp = 20, vp = 0;
-let cellPath = new Path2D();
 
 /*
  * View related variables.

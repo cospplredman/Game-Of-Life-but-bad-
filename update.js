@@ -5,6 +5,7 @@ updater.onmessage = (e) => {
 /*
  * Worker Communication loop
  * */
+let ibm;
 let getInfo = () => {
 	let v = glob.ev.length;
 
@@ -13,10 +14,11 @@ let getInfo = () => {
 		-Math.floor(yOff/px),
 		Math.floor(screenctx.canvas.width/px + 1),
 		Math.floor(screenctx.canvas.height/px + 1),
-		vd
+		vd,
+		performance.now()
 	];
 
-	for(let i = 0; i != 4; i++)
+	for(let i = 0; i != 5; i++)
 		if(t[i] != glob.v[i]){
 			updater.postMessage([6, t]);
 			break;
@@ -28,12 +30,8 @@ let getInfo = () => {
 		let n = glob.ev.pop();
 		switch(n[0]){
 			case 3:
-				zp = px, vp = n[1][1][4];
-				cellPath = new Path2D();
-				
-				alive = n[1][0];
-				for(let i = 0; i != alive.length; i++)
-					cellPath.rect(alive[i][0]*px, alive[i][1]*px, px, px);
+				ibm = n[1][1]
+				vp = n[1][0];
 			break;
 			case 4:
 				updater.postMessage([6, t]);
