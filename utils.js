@@ -3,16 +3,6 @@ function drawLine(x1, y1, x2, y2) {
 	screenctx.lineTo(x2, y2);
 }
 
-function fillTriangle(x1, y1, x2, y2, x3, y3) {
-	screenctx.beginPath();
-	screenctx.moveTo(x1, y1);
-	screenctx.lineTo(x2, y2);
-	screenctx.lineTo(x3, y3);
-	screenctx.closePath();
-	screenctx.fill();
-	screenctx.stroke();
-}
-
 function drawGrid(){
 	screenctx.beginPath();
 	let xa = xOff%px, ya = yOff%px;
@@ -101,16 +91,20 @@ function RLE(str){
 	return r;
 }
 
-function attemptEditGrid() {
-	if(draggingmouse && mbutton!=-1 && mbutton!=1) {
-		let xTmp = (x - xOff)/px, yTmp = (y - yOff)/px;
-		switch(mbutton){
-			case 2:
-				setCell(xTmp, yTmp, 0);
-			break;
-			case 0:
-				setCell(xTmp, yTmp, 1);
-			break;
-		}
-	}
+function screenShot(){
+	let scr = document.createElement("canvas");
+	let ctx = scr.getContext("2d");
+	ctx.canvas.width = frame.width;
+	ctx.canvas.height = frame.height;
+	ctx.drawImage(frame, 0, 0);
+	let url = scr.toDataURL();
+
+	var a = document.createElement('a');
+	a.href = url;
+	a.download = "screenshot.png";
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a)
+;	
 }
+

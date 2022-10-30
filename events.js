@@ -11,72 +11,81 @@ window.addEventListener("resize", function(e) {
 // Keyboard
 window.addEventListener("keydown", function(e) {
 	switch(e.code){
-	case "ArrowUp":
-		tps += 1;
-		setTps(tps);
+		case "ArrowUp":
+			tps += 1;
+			setTps(tps);
 		break;
-	case "ArrowDown":
-		tps -= 1;
-		tps = tps < 0 ? 0 : tps;
-		setTps(tps);
+		case "ArrowDown":
+			tps -= 1;
+			tps = tps < 0 ? 0 : tps;
+			setTps(tps);
 		break;
-	case "Space":
-		setPause(!pause);
-		pause = !pause
+		case "Space":
+			pause = !pause
+			setPause(pause);
 		break;
-	case "KeyG":
-		grid = !grid;
+		case "KeyG":
+			grid = !grid;
+		break;
+		case "KeyS":
+			screenShot();
 		break;
 	}
 });
 
 // Mouse
 screen.addEventListener("mousedown", function(e) {
-  switch (e.button) {
-    case 0:
-	  draggingmouse=true;
-	  if(mbutton!=0&&mbutton!=-1) mbutton=-1;
-	  mbutton=0;
-      break;
-	case 1:
-	  draggingmouse=true;
-	  panmode = true;
-	  if(mbutton!=1&&mbutton!=-1) mbutton=-1;
-	  mbutton=1;
-      break;
-    case 2:
-	  draggingmouse=true;
-	  if(mbutton!=2&&mbutton!=-1) mbutton=-1;
-	  mbutton=2;
-      break;
-  }
-  attemptEditGrid();
+	let xTmp = Math.floor((x - xOff)/px), yTmp = Math.floor((y - yOff)/px);
+	switch (e.button) {
+		case 0:
+			mbutton |= 1;
+			setCell(xTmp, yTmp, 1);
+		break;
+		case 1:
+			panmode = true;
+			mbutton |= 2;
+		break;
+		case 2:
+			mbutton |= 4;
+			setCell(xTmp, yTmp, 0);
+		break;
+	}
 });
-
 screen.addEventListener("mousemove",function(e) {
 	if(panmode)
 		xOff -= x - e.clientX, yOff -= y - e.clientY
-
+	
 	x = e.clientX, y = e.clientY;
-	attemptEditGrid();
+
+	let xTmp = Math.floor((x - xOff)/px), yTmp = Math.floor((y - yOff)/px);
+	switch(mbutton){
+		case 1:
+			setCell(xTmp, yTmp, 1);
+		break;
+		case 4:
+			setCell(xTmp, yTmp, 0);
+		break;
+	}
+});
+screen.addEventListener("mouseleave", ()=>{
+	panmode = false;
+	mbutton = 0;
 });
 
 screen.addEventListener("mouseup", function(e) {
-  switch (e.button) {
-    case 0:
-	  draggingmouse=false;
-	  mbutton=-1;
-      break;
-	case 1:
-	  panmode=false;
-	  draggingmouse=false;
-	  mbutton=-1;
-	  break;
-    case 2:
-	  draggingmouse=false;
-	  mbutton=-1;
-      break;
-  }
+	switch (e.button) {
+		case 0:
+
+			mbutton &= ~1;
+		break;
+		case 1:
+			panmode=false;
+			mbutton &= ~2;
+		break;
+		case 2:
+			mbutton &= ~4;
+		break;
+	}
 });
 
 screen.addEventListener("wheel", function(e){ 
@@ -87,7 +96,7 @@ screen.addEventListener("wheel", function(e){
 		zoom = 0.03;
 
 	px = 20/zoom;
-	td = -Math.floor(Math.log2(px*2));
+	td = -Math.floor(Math.log2(px*(1 << loddist)));
 
 	if(td < 0)
 		td = 0;
