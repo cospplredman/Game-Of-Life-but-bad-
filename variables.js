@@ -4,8 +4,11 @@ let screenctx = screen.getContext("2d", {alpha: false});
 screenctx.canvas.width = window.innerWidth;
 screenctx.canvas.height = window.innerHeight;
 
-//draw path
-let zp = 20, vp = 0;
+//current frame
+let loddist = 1;
+let zp = 0, vp = 0;
+let frame;
+createImageBitmap(screen).then((img)=>{frame=img});
 
 /*
  * View related variables.
@@ -23,8 +26,7 @@ let xOff = 0, yOff = 0,
     grid = true, zoom = 1, vd = 0;
 
 // Mouse
-let draggingmouse=false;
-let mbutton=-1;
+let mbutton=0;
 let panmode = false;
 let scrollSpeed = 0.15;
 

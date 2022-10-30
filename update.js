@@ -5,15 +5,14 @@ updater.onmessage = (e) => {
 /*
  * Worker Communication loop
  * */
-let ibm;
 let getInfo = () => {
 	let v = glob.ev.length;
 
 	let t = [
-		-Math.floor(xOff/px),
-		-Math.floor(yOff/px),
-		Math.floor(screenctx.canvas.width/px + 1),
-		Math.floor(screenctx.canvas.height/px + 1),
+		-Math.floor(xOff/px) - 1,
+		-Math.floor(yOff/px) - 1,
+		Math.floor(screenctx.canvas.width/px) + 2,
+		Math.floor(screenctx.canvas.height/px) + 2,
 		vd,
 		performance.now()
 	];
@@ -30,7 +29,8 @@ let getInfo = () => {
 		let n = glob.ev.pop();
 		switch(n[0]){
 			case 3:
-				ibm = n[1][1]
+				frame.close();
+				frame = n[1][1];
 				vp = n[1][0];
 			break;
 			case 4:

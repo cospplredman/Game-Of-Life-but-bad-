@@ -10,5 +10,6 @@ Controls:
   - Right Click - Kill cell
   - Space - Toggle pause
   - G - Toggle grid
+  - S - screenshot
 
 This is an implimentation of Bill Gosper's Hash Life that runs in the browser.

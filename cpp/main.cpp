@@ -78,7 +78,7 @@ Node *adapt(Node* b){
 
 EM_JS(void, setup, (), {
 	glob.ev = [];
-	glob.v = [0,0,0,0,0,0];
+	glob.v = [0,0,1,1,0,0];
 	onmessage = async function(e) {
 		glob.ev.push(e.data);
 	};
@@ -140,7 +140,7 @@ EM_JS(void, SAT, (double q), {
 //==================================================
 enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps};
 size_t x, y, w, h, pause = 1, tps = 10, vd=0, sd=1;
-double aft = 0.065;
+double aft = 0.065, slt = 0;
 std::chrono::high_resolution_clock::time_point frameStart;
 
 void sendCells(){
@@ -213,32 +213,31 @@ EM_BOOL evLoop(double time, void* userData){
 		}	
 	}
 	
+	
+	
+	auto frameEnd = std::chrono::high_resolution_clock::now();
+	auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+	frameStart = std::chrono::high_resolution_clock::now();
+	double ft = std::chrono::duration<float>(frameTime).count();
+	aft = (999.0*aft + ft)/1000.0;
 	if(!pause){
-		auto frameEnd = std::chrono::high_resolution_clock::now();
-		auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
-		double ft = std::chrono::duration<float>(frameTime).count();
-
-		if((float)tps > 1.0/std::chrono::duration<float>(frameTime).count()){
-			aft = (99.0*aft + ft)/100.0;
-			frameStart = std::chrono::high_resolution_clock::now();
-			setSd(l2((double)tps / (1.0/aft)));
-			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
-			SAT(atps);
+		double rst = l2((double)tps / (1.0/aft));
+		slt += ft;
+		if(tps > 1.0/slt){
+			SAT(1.0/slt * (1 << (sd - 1)));
+			slt = 0;
+			setSd(rst);
 			//for when i get around to abitrarily sized maps
 			//qt = adapt(qt->solven(tr, depth, sd));
 			qt = center(qt->solven(tr, depth-2, sd));
 			uv = 1;
 		}else if(tps == 0){
-			aft = (99.0*aft + ft)/100.0;
-			frameStart = std::chrono::high_resolution_clock::now();
+			SAT(1.0/slt * (1 << (sd - 1)));
+			slt = 0;
 			setSd(depth-2);
-			double atps = 1.0/std::chrono::duration<float>(frameTime).count() * (1 << (sd - 1));
-			SAT(atps);
 			qt = center(qt->solve(tr));
 			uv = 1;
 		}
-	}else{
-			frameStart = std::chrono::high_resolution_clock::now();
 	}
 
 	if(uv)
