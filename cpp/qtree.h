@@ -1,4 +1,5 @@
 #include"hashTable.h"
+
 struct qtree{
 	struct Node{
 		union{
@@ -33,6 +34,7 @@ struct qtree{
 		void map(int64_t, int64_t, int64_t, int64_t, int64_t, void (*)(size_t, size_t, size_t));
 	};
 
+	char rule[2][9] = {{0,0,0,1,0,0,0,0,0}, {0,0,1,1,0,0,0,0,0}};
 	size_t items;
 	hashTable<Node> memo;
 	Node *base[2];

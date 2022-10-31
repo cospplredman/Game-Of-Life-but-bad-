@@ -138,7 +138,7 @@ EM_JS(void, SAT, (double q), {
 });
 
 //==================================================
-enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps};
+enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps, getRule};
 size_t x, y, w, h, pause = 1, tps = 10, vd=0, sd=1;
 double aft = 0.065, slt = 0;
 std::chrono::high_resolution_clock::time_point frameStart;
@@ -209,6 +209,11 @@ EM_BOOL evLoop(double time, void* userData){
 			break;
 			case getTps:
 				tps = NP(0);
+			break;
+			case getRule:
+				for(size_t i = 0; i != 18; i++)
+					((char*)tr.rule)[i] = NP(i);
+				tr.prune(qt,depth);
 			break;
 		}	
 	}

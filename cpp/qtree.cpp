@@ -72,15 +72,6 @@ Node::Node(Node* a, Node* b, Node* c, Node* d){
 	next = nullptr;
 }
 
-//char rule[2][9] = {{0,0,0,1,0,0,0,0,0}, {0,0,1,1,0,0,0,0,0}};
-//char rule[2][9] = {{0,0,0,1,0,0,0,0,0},{0,1,1,1,1,0,0,0,0}};
-//char rule[2][9] = {{0,0,1,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0}};
-char rule[2][9] = {{0,0,1,1,1,0,0,0,0},{0,0,0,0,0,0,0,0,0}};
-//char rule[2][9] = {{0,0,0,1,0,0,0,1,0},{0,1,1,1,1,1,0,0,0}};
-//B0123478/S34678
-//char rule[2][9] = {{1,1,1,1,1,0,0,1,1},{0,0,0,1,1,0,1,1,1}};
-
-
 Node* Node::solve1(qtree& tree){
 	size_t a[4][4] = {
 		{nw()->nw()->hash, nw()->ne()->hash, ne()->nw()->hash, ne()->ne()->hash},
@@ -96,7 +87,7 @@ Node* Node::solve1(qtree& tree){
 			b[i][j] = 	a[i][j] + a[i+1][j] + a[i+2][j] +
 					a[i][j+1] + a[i+1][j+1] + a[i+2][j+1] +
 					a[i][j+2] + a[i+1][j+2] + a[i+2][j+2];
-			b[i][j] = rule[a[i + 1][j + 1]][b[i][j] - a[i+1][j+1]];
+			b[i][j] = tree.rule[a[i + 1][j + 1]][b[i][j] - a[i+1][j+1]];
 		}
 	
 	return next = tree.get(Node(

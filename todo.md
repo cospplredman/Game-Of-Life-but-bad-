@@ -11,5 +11,5 @@ TODO:
 	- re-impliment update loop first
 - Copy paste, and the ability to load gol files.
 	- impliment control system for it.
-- add way to change rule dynamically.
+- ~~add way to change rule dynamically.~~
 	- just need an interface for it.

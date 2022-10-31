@@ -65,3 +65,7 @@ let setTps = function(tps) {
 let setPause = function(v){
 	updater.postMessage([7, [+v]]);
 }
+
+let setRule = function(v){
+	updater.postMessage([9, v]);
+}

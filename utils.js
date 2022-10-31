@@ -108,3 +108,11 @@ function screenShot(){
 ;	
 }
 
+function rule(str){
+	let ret = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	let q = str.split("/");
+	for(let i = 0; i != 2; i++)
+		for(let j = 1; j != q[i].length; j++)
+			ret[i*9 + j] = 1;
+	return ret;
+}

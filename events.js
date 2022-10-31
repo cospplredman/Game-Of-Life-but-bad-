@@ -30,6 +30,9 @@ window.addEventListener("keydown", function(e) {
 		case "KeyS":
 			screenShot();
 		break;
+		case "KeyR":
+			setRule(rule(prompt("please enter rule")));
+		break;
 	}
 });
 
