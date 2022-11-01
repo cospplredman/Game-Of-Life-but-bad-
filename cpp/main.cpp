@@ -140,7 +140,7 @@ EM_JS(void, SAT, (double q), {
 //==================================================
 enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps, getRule};
 size_t x, y, w, h, pause = 1, tps = 10, vd=0, sd=1;
-double aft = 0.065, slt = 0;
+double aft = 0.065, slt = 0, aslt = 0.150;
 std::chrono::high_resolution_clock::time_point frameStart;
 
 void sendCells(){
@@ -160,7 +160,7 @@ void setSd(size_t a){
 }
 
 size_t l2(size_t a){
-	size_t c = 0;
+	size_t c = 1;
 	while(a){
 		a>>=1;
 		c++;
@@ -224,12 +224,15 @@ EM_BOOL evLoop(double time, void* userData){
 	auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
 	frameStart = std::chrono::high_resolution_clock::now();
 	double ft = std::chrono::duration<float>(frameTime).count();
-	aft = (999.0*aft + ft)/1000.0;
+	aft = (99.0*aft + ft)/100.0;
 	if(!pause){
 		double rst = l2((double)tps / (1.0/aft));
+
 		slt += ft;
 		if(tps > 1.0/slt){
-			SAT(1.0/slt * (1 << (sd - 1)));
+			aslt = (9.0*aslt + slt)/10.0;
+
+			SAT(1.0/aslt * (1 << (sd - 1)));
 			slt = 0;
 			setSd(rst);
 			//for when i get around to abitrarily sized maps
@@ -237,7 +240,10 @@ EM_BOOL evLoop(double time, void* userData){
 			qt = center(qt->solven(tr, depth-2, sd));
 			uv = 1;
 		}else if(tps == 0){
-			SAT(1.0/slt * (1 << (sd - 1)));
+			aslt = (9.0*aslt + slt)/10.0;
+
+
+			SAT(1.0/aslt * (1 << (sd - 1)));
 			slt = 0;
 			setSd(depth-2);
 			qt = center(qt->solve(tr));
