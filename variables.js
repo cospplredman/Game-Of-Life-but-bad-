@@ -31,7 +31,7 @@ let panmode = false;
 let scrollSpeed = 0.15;
 
 //worker
-let updater = new Worker("cpp/build/main.js");
+let updater = new Worker("cpp/main.js");
 
 //worker message cache
 let glob = {ev:[], v:[]};
