@@ -12,4 +12,5 @@ Controls:
   - G - Toggle grid
   - S - screenshot
   - R - open a prompt for changing the rule
+
 This is an implimentation of Bill Gosper's Hash Life that runs in the browser.
