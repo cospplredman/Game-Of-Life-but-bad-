@@ -419,6 +419,3 @@ function draw(){
 
 	requestAnimationFrame(draw);
 }
-
-draw();
-getInfo();
