@@ -47,7 +47,7 @@ function draw(){
 	}
 	
 	screenctx.fillStyle = `hwb(${Math.floor(lerp(0, 120, clamp(tpsAccurate / (tps ? tps : 100), 0, 1)))} 0% 0%)`
-	{ //actual TPS test
+	{ //actual TPS text
 		let atpstxt = ["(Actual: " + Math.floor(tpsAccurate*10)/10 + ")", 8, 50];
 
 		screenctx.strokeText(...atpstxt);
