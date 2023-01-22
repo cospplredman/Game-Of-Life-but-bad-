@@ -4,18 +4,21 @@
 		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 		<title>Conway's Game of Life</title>
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
-		<link rel="stylesheet" type="text/css" href="styles.css">
+		<style>
+			body{
+				background-color: black;
+			}
+
+			canvas {
+				position: absolute;
+				inset: 0 0 0 0;
+				margin: auto;
+				cursor: none;
+			}
+		</style>
 	</head>
 	<body>
 		<canvas id="screen">Your browser does not support canvas.</canvas>
 	</body>
-	<script src="utils.js"></script>
-	<script src="variables.js"></script>
-	<script src="events.js"></script>
-	<script src="update.js"></script>
-	<script src="draw.js"></script>
-	<script>
-		draw();
-		getInfo();
-	</script>
+	<script src="cgl.js"></script>
 </html>
