@@ -39,6 +39,7 @@ let tpsAccurate = 0;
 let alive = [];
 let tps = 10;
 let pause = true;
+
 // Outer / meta
 screen.addEventListener("contextmenu", function(e) {
   e.preventDefault();
@@ -95,6 +96,7 @@ screen.addEventListener("mousedown", function(e) {
 		break;
 	}
 });
+
 screen.addEventListener("mousemove",function(e) {
 	if(panmode)
 		xOff -= x - e.clientX, yOff -= y - e.clientY
@@ -111,6 +113,7 @@ screen.addEventListener("mousemove",function(e) {
 		break;
 	}
 });
+
 screen.addEventListener("mouseleave", ()=>{
 	panmode = false;
 	mbutton = 0;
@@ -162,14 +165,15 @@ screen.addEventListener("wheel", function(e){
 	xOff = (xs * px) + x;
 	yOff = (ys * px) + y;
 });
-updater.onmessage = (e) => {
+
+updater.onmessage = function(e) {
 	glob.ev.push(e.data);
 }
 
 /*
  * Worker Communication loop
  * */
-let getInfo = () => {
+function getInfo() {
 	let v = glob.ev.length;
 
 	let t = [
@@ -193,9 +197,10 @@ let getInfo = () => {
 		let n = glob.ev.pop();
 		switch(n[0]){
 			case 3:
-				frame.close();
+				let of = frame;
 				frame = n[1][1];
 				vp = n[1][0];
+				of.close();
 			break;
 			case 4:
 				updater.postMessage([6, t]);
@@ -212,27 +217,28 @@ let getInfo = () => {
 /*
  * Sets the cell at (x, y) to the state v
  * */
-let setCell = function(x, y, v){
+function setCell(x, y, v){
 	updater.postMessage([1,[x, y, v]]);
 }
 
 /*
  * Sets the tps limit to tps
  * */
-let setTps = function(tps) {
+function setTps(tps) {
 	updater.postMessage([8, [tps]]);
 }
 
 /*
  * Sets the pause state to the state v
  * */
-let setPause = function(v){
+function setPause(v){
 	updater.postMessage([7, [+v]]);
 }
 
-let setRule = function(v){
+function setRule(v){
 	updater.postMessage([9, v]);
 }
+
 function drawLine(x1, y1, x2, y2) {
 	screenctx.moveTo(x1, y1);
 	screenctx.lineTo(x2, y2);
@@ -327,6 +333,7 @@ function RLE(str){
 }
 
 function screenShot(){
+	//TODO: doesn't function properly when LOD is active
 	let scr = document.createElement("canvas");
 	let ctx = scr.getContext("2d");
 	ctx.canvas.width = frame.width;
@@ -337,10 +344,7 @@ function screenShot(){
 	var a = document.createElement('a');
 	a.href = url;
 	a.download = "screenshot.png";
-	document.body.appendChild(a);
 	a.click();
-	document.body.removeChild(a)
-;	
 }
 
 function rule(str){
@@ -351,6 +355,7 @@ function rule(str){
 			ret[i*9 + +q[i][j]] = 1;
 	return ret;
 }
+
 function draw(){
 	{ //clear
 		screenctx.clearRect(0, 0, screenctx.canvas.width, screenctx.canvas.height);
