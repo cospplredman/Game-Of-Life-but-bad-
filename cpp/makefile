@@ -1,12 +1,11 @@
 #Building requires the emscripten compiler and associated headers
 
-
 SRC := $(shell echo src/*.cpp)
 OBJ := $(SRC:.cpp=.o)
 INC := src
 
 CXX = emcc
-CXXFLAGS = -I${INC} -sALLOW_MEMORY_GROWTH -O3 -sEXPORTED_FUNCTIONS=_main
+CXXFLAGS = -I${INC} -sALLOW_MEMORY_GROWTH -g0 -O2 -Wall -pedantic
 
 default: all
 all: main.js
@@ -18,7 +17,6 @@ clean:
 	${CXX} ${CXXFLAGS} -c $< -o $@
 
 main.js: main.cpp ${OBJ}
-	$(CXX) ${CXXFLAGS} $^ -o $@; \
-	echo ";let glob = {};" >> main.js
+	$(CXX) ${CXXFLAGS} $^ -o $@ -sEXPORTED_FUNCTIONS=_main --pre-js prejs.js
 
 .PHONY: all clean

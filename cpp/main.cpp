@@ -75,15 +75,7 @@ Node *adapt(Node* b){
 }
 
 //=================================================================
-
-EM_JS(void, setup, (), {
-	glob.ev = [];
-	glob.v = [0,0,1,1,0,0];
-	onmessage = async function(e) {
-		glob.ev.push(e.data);
-	};
-	postMessage([4,[]]);
-});
+//glue code
 
 EM_JS(size_t, getEvent, (), {
 	glob.c = glob.ev.pop();
@@ -99,10 +91,10 @@ EM_JS(void, CP, (), {
 
 EM_JS(void, PP, (size_t x, size_t y, size_t hsh), {
 	let i = (x + y*glob.v[2])*4;
-	if(hsh){
-		glob.pd[i] = glob.pd[i+1] = glob.pd[i+2] = 255;
-		glob.pd[i+3] = 255;
-	}
+	if(hsh)
+		[glob.pd[i], glob.pd[i+1], glob.pd[i+2], glob.pd[i+3]] = [255, 255, 255 ,255];
+	else
+		[glob.pd[i], glob.pd[i+1], glob.pd[i+2], glob.pd[i+3]] = [0, 0, 0, 0];
 });
 
 EM_JS(void, PC, (), {
@@ -118,10 +110,6 @@ EM_JS(size_t, numEvents, (), {
 
 EM_JS(size_t, NP, (size_t a), {
 	return glob.c[1][a];
-});
-
-EM_JS(void, PR, (size_t e, size_t x, size_t y), {
-	postMessage([e, [x, y]]);
 });
 
 EM_JS(void, SV, (), {
@@ -172,7 +160,6 @@ size_t l2(size_t a){
 EM_BOOL evLoop(double time, void* userData){
 
 	size_t uv = 0;
-
 	size_t mx = 0;
 	size_t cu = 0;
 
@@ -221,28 +208,26 @@ EM_BOOL evLoop(double time, void* userData){
 	//for when i get around to abitrarily sized maps
 	//qt = adapt(qt->solven(tr, depth, sd));
 	
-	
 	frameEnd = std::chrono::high_resolution_clock::now();
 	auto ft = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
 	frameStart = std::chrono::high_resolution_clock::now();
 	double frameTime = std::chrono::duration<float>(ft).count();
 
 	if(!pause){
-		double rst = l2((double)tps / (1.0/frameTime));
-
 		sinceLastTick += frameTime;
-		if(tps > 1.0/sinceLastTick){
+		if(tps > 1.0/sinceLastTick || tps == 0){
+			uv = 1;
 			SAT(1.0/sinceLastTick * (1 << (sd - 1)));
 			sinceLastTick = 0;
-			setSd(rst);
-			qt = center(qt->solven(tr, depth-2, sd));
-			uv = 1;
-		}else if(tps == 0){
-			SAT(1.0/sinceLastTick * (1 << (sd - 1)));
-			sinceLastTick = 0;
-			setSd(depth-2);
-			qt = center(qt->solve(tr));
-			uv = 1;
+
+			if(tps == 0){
+				setSd(depth-2);
+				qt = center(qt->solve(tr));
+			}else{
+				double rst = l2((double)tps / (1.0/frameTime));
+				setSd(rst);
+				qt = center(qt->solven(tr, depth-2, sd));
+			}
 		}
 	}
 
@@ -258,7 +243,6 @@ EM_BOOL evLoop(double time, void* userData){
 int main(){
 	qt = etree(31);
 	depth = 31;
-	setup();
 	frameStart = std::chrono::high_resolution_clock::now();
 	frameEnd = frameStart;
 
