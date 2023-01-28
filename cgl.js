@@ -8,7 +8,6 @@ screenctx.canvas.height = window.innerHeight;
 let loddist = 1;
 let zp = 0, vp = 0;
 let frame;
-createImageBitmap(screen).then((img)=>{frame=img});
 
 /*
  * View related variables.
@@ -97,21 +96,27 @@ screen.addEventListener("mousedown", function(e) {
 	}
 });
 
-screen.addEventListener("mousemove",function(e) {
+screen.addEventListener("pointermove",function(e) {
 	if(panmode)
 		xOff -= x - e.clientX, yOff -= y - e.clientY
 	
 	x = e.clientX, y = e.clientY;
 
-	let xTmp = Math.floor((x - xOff)/px), yTmp = Math.floor((y - yOff)/px);
-	switch(mbutton){
-		case 1:
-			setCell(xTmp, yTmp, 1);
-		break;
-		case 4:
-			setCell(xTmp, yTmp, 0);
-		break;
+	console.log(e);
+	let events = e.getCoalescedEvents();
+	if(mbutton == 1 || mbutton == 4){
+		let state = 0;
+		if(mbutton == 1)
+			state = 1;
+
+		for(let i = 0; i < events.length; i++){
+			let x = events[i].clientX, y = events[i].clientY;
+			let xTmp = Math.floor((x - xOff)/px), yTmp = Math.floor((y - yOff)/px);
+
+			setCell(xTmp, yTmp, state);
+		}
 	}
+
 });
 
 screen.addEventListener("mouseleave", ()=>{
@@ -424,3 +429,9 @@ function draw(){
 
 	requestAnimationFrame(draw);
 }
+
+createImageBitmap(screen).then((img)=>{
+	frame=img
+	draw();
+	getInfo();
+});
