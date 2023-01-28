@@ -5,7 +5,7 @@ OBJ := $(SRC:.cpp=.o)
 INC := src
 
 CXX = emcc
-CXXFLAGS = -I${INC} -sALLOW_MEMORY_GROWTH -g0 -O2 -Wall -pedantic
+CXXFLAGS = -I${INC} -g0 -O2 -Wall -pedantic
 
 default: all
 all: main.js
@@ -17,6 +17,6 @@ clean:
 	${CXX} ${CXXFLAGS} -c $< -o $@
 
 main.js: main.cpp ${OBJ}
-	$(CXX) ${CXXFLAGS} $^ -o $@ -sEXPORTED_FUNCTIONS=_main --pre-js prejs.js
+	$(CXX) ${CXXFLAGS} $^ -o $@ -sALLOW_MEMORY_GROWTH -sEXPORTED_FUNCTIONS=_main --pre-js prejs.js
 
 .PHONY: all clean

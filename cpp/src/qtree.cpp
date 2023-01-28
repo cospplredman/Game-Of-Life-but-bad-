@@ -80,7 +80,7 @@ Node* Node::solve1(qtree& tree){
 		{sw()->sw()->hash, sw()->se()->hash, se()->sw()->hash, se()->se()->hash}
 	};
 
-	char b[2][2];
+	unsigned char b[2][2];
 
 	for(size_t i = 0; i != 2; i++)
 		for(size_t j = 0; j != 2; j++){
@@ -162,7 +162,7 @@ Node::operator bool(){
 }
 
 char Node::operator==(Node &b){
-	for(char i = 0; i != 4; i++)
+	for(unsigned char i = 0; i != 4; i++)
 		if(nf[i] != b.nf[i])
 			return 0;
 	return 1;
@@ -184,7 +184,7 @@ size_t Node::operator+(){
 }
 
 void Node::print(){
-	printf("%p = Node(%p, %p, %p, %p) -> %p\n", this, nf[0], nf[1], nf[2], nf[3], next);
+	printf("%p = Node(%p, %p, %p, %p) -> %p\n", (void*)this, (void*)nf[0], (void*)nf[1], (void*)nf[2], (void*)nf[3], (void*)next);
 }
 
 size_t Node::get(size_t x, size_t y, size_t d){
