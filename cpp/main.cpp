@@ -140,8 +140,8 @@ EM_JS(void, SAT, (double q), {
 //==================================================
 enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps, getRule};
 size_t x, y, w, h, pause = 1, tps = 10, vd=0, sd=1;
-double aft = 0.065, slt = 0, aslt = 0.150;
-std::chrono::high_resolution_clock::time_point frameStart;
+double sinceLastTick = 0;
+std::chrono::high_resolution_clock::time_point frameStart, frameEnd;
 
 void sendCells(){
 	CP();
@@ -160,7 +160,7 @@ void setSd(size_t a){
 }
 
 size_t l2(size_t a){
-	size_t c = 1;
+	size_t c = 0;
 	while(a){
 		a>>=1;
 		c++;
@@ -218,33 +218,28 @@ EM_BOOL evLoop(double time, void* userData){
 		}	
 	}
 	
+	//for when i get around to abitrarily sized maps
+	//qt = adapt(qt->solven(tr, depth, sd));
 	
 	
-	auto frameEnd = std::chrono::high_resolution_clock::now();
-	auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+	frameEnd = std::chrono::high_resolution_clock::now();
+	auto ft = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
 	frameStart = std::chrono::high_resolution_clock::now();
-	double ft = std::chrono::duration<float>(frameTime).count();
-	aft = (99.0*aft + ft)/100.0;
+	double frameTime = std::chrono::duration<float>(ft).count();
+
 	if(!pause){
-		double rst = l2((double)tps / (1.0/aft));
+		double rst = l2((double)tps / (1.0/frameTime));
 
-		slt += ft;
-		if(tps > 1.0/slt){
-			aslt = (9.0*aslt + slt)/10.0;
-
-			SAT(1.0/aslt * (1 << (sd - 1)));
-			slt = 0;
+		sinceLastTick += frameTime;
+		if(tps > 1.0/sinceLastTick){
+			SAT(1.0/sinceLastTick * (1 << (sd - 1)));
+			sinceLastTick = 0;
 			setSd(rst);
-			//for when i get around to abitrarily sized maps
-			//qt = adapt(qt->solven(tr, depth, sd));
 			qt = center(qt->solven(tr, depth-2, sd));
 			uv = 1;
 		}else if(tps == 0){
-			aslt = (9.0*aslt + slt)/10.0;
-
-
-			SAT(1.0/aslt * (1 << (sd - 1)));
-			slt = 0;
+			SAT(1.0/sinceLastTick * (1 << (sd - 1)));
+			sinceLastTick = 0;
 			setSd(depth-2);
 			qt = center(qt->solve(tr));
 			uv = 1;
@@ -265,6 +260,7 @@ int main(){
 	depth = 31;
 	setup();
 	frameStart = std::chrono::high_resolution_clock::now();
+	frameEnd = frameStart;
 
 	//god this is awful XD
 	emscripten_request_animation_frame_loop(evLoop, 0);
