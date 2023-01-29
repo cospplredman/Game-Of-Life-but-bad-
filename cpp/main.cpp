@@ -128,7 +128,7 @@ EM_JS(void, SAT, (double q), {
 //==================================================
 enum{None, setCell, getCell, update, p, getCells, getView, getPause, getTps, getRule};
 size_t x, y, w, h, pause = 1, tps = 10, vd=0, sd=1;
-double sinceLastTick = 0;
+double sinceLastTick = 0.016, averageTickTime = 0.016;
 std::chrono::high_resolution_clock::time_point frameStart, frameEnd;
 
 void sendCells(){
@@ -215,16 +215,18 @@ EM_BOOL evLoop(double time, void* userData){
 
 	if(!pause){
 		sinceLastTick += frameTime;
-		if(tps > 1.0/sinceLastTick || tps == 0){
-			uv = 1;
-			SAT(1.0/sinceLastTick * (1 << (sd - 1)));
+		if(tps == 0 || tps > (1 << (sd - 1)) / sinceLastTick){
+			averageTickTime = (9*averageTickTime + sinceLastTick)/10;
+			double atps = (1 << (sd - 1)) / averageTickTime;
+			SAT(atps);
 			sinceLastTick = 0;
+			uv = 1;
 
 			if(tps == 0){
 				setSd(depth-2);
 				qt = center(qt->solve(tr));
 			}else{
-				double rst = l2((double)tps / (1.0/frameTime));
+				double rst = l2((double)tps * averageTickTime);
 				setSd(rst);
 				qt = center(qt->solven(tr, depth-2, sd));
 			}
