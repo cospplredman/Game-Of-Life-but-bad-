@@ -102,7 +102,6 @@ screen.addEventListener("pointermove",function(e) {
 	
 	x = e.clientX, y = e.clientY;
 
-	console.log(e);
 	let events = e.getCoalescedEvents();
 	if(mbutton == 1 || mbutton == 4){
 		let state = 0;
