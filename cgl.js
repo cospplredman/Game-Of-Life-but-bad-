@@ -51,6 +51,7 @@ window.addEventListener("resize", function(e) {
 
 // Keyboard
 window.addEventListener("keydown", function(e) {
+	e.preventDefault();
 	switch(e.code){
 		case "ArrowUp":
 			tps += 1;
@@ -140,6 +141,8 @@ screen.addEventListener("mouseup", function(e) {
 });
 
 screen.addEventListener("wheel", function(e){ 
+	e.preventDefault();
+
 	let xs = (xOff - x)/px, ys = (yOff - y)/px;
 	zoom += clamp(e.deltaY,-1,1)*scrollSpeed;
 
